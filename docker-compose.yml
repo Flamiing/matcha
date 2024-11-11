@@ -21,34 +21,36 @@ services:
 
     backend:
         container_name: backend
-        build: 
-            context: ./docker/Backend
+        build:
+            context: ./Docker/Backend
             dockerfile: Dockerfile
         volumes:
             - ./Backend:/Backend
         env_file: .env
         ports:
-          - "3001"
+            - "3001"
 
     frontend:
         container_name: frontend
-        build: 
-            context: ./docker/Frontend
-            dockerfile: Dockerfile
+        build:
+            context: ./frontend
+            dockerfile: ../Docker/Frontend/Dockerfile
         volumes:
-            - ./Frontend:/Frontend
+            - ./frontend:/frontend
+            - /frontend/node_modules
         env_file: .env
         ports:
-          - "3000:80"
-
+            - "3000:3000"
+        expose:
+            - "3000"
+        command: ["npm", "run", "dev"]
 volumes:
     postgresql_volume:
         driver: local
         driver_opts:
-            type: 'none'
-            o: 'bind'
-            device: '${POSTGRESQL_VOLUME_PATH}'
-
+            type: "none"
+            o: "bind"
+            device: "${POSTGRESQL_VOLUME_PATH}"
 networks:
     matcha-network:
         driver: bridge

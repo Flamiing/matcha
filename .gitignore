@@ -18,3 +18,7 @@ docker-compose*.log
 
 # Logs
 /src/logs
+
+# modules folder
+node_modules
+w

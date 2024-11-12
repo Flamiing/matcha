@@ -1,0 +1,35 @@
+import { Link, useLocation } from "react-router-dom";
+
+const Footer = () => {
+	return (
+		<footer className="bg-gray-900 text-white p-4">
+			<div className="container flex justify-between flex-col md:flex-row md:gap-0 gap-5 m-auto md:items-center">
+				<div>
+					<h3 className="text-2xl font-bold">Matcha</h3>
+					<p>
+						<Link
+							to="https://profile.intra.42.fr/users/alaparic"
+							className="underline"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							alaparic
+						</Link>
+						{" & "}
+						<Link
+							to="https://profile.intra.42.fr/users/alaaouam"
+							className="underline"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							alaaouam
+						</Link>
+					</p>
+				</div>
+				<p className="font-thin">&copy; All rights reserved 2025</p>
+			</div>
+		</footer>
+	);
+};
+
+export default Footer;

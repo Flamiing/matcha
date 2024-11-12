@@ -22,13 +22,13 @@ services:
     backend:
         container_name: backend
         build:
-            context: ./Docker/Backend
-            dockerfile: Dockerfile
+            context: ./Backend
+            dockerfile: ../docker/backend/Dockerfile
         volumes:
-            - ./Backend:/Backend
+            - ./Backend:/matcha_backend
         env_file: .env
         ports:
-            - "3001"
+            - "3001:3001"
 
     frontend:
         container_name: frontend

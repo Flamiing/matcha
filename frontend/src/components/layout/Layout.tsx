@@ -3,15 +3,15 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 
 const Layout = () => {
-  const location = useLocation();
+	const location = useLocation();
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <Outlet />
-      <Footer />
-    </div>
-  );
+	return (
+		<div className="min-h-screen flex flex-col">
+			<Header />
+			<Outlet />
+			<Footer />
+		</div>
+	);
 };
 
 export default Layout;

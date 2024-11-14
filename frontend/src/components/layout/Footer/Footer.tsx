@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 const Footer = () => {
 	return (
 		<footer className="bg-gray-900 text-white p-4">
-			<div className="container flex justify-between flex-col md:flex-row md:gap-0 gap-5 m-auto md:items-center">
+			<div className="container flex justify-between flex-col md:flex-row md:gap-0 gap-5 m-auto items-center text-center md:text-start">
 				<div>
 					<h3 className="text-2xl font-bold">Matcha</h3>
 					<p>
@@ -26,7 +26,7 @@ const Footer = () => {
 						</Link>
 					</p>
 				</div>
-				<p className="font-thin">&copy; All rights reserved 2025</p>
+				<p className="font-thin">&copy; 2025 - All rights reserved</p>
 			</div>
 		</footer>
 	);

@@ -4,5 +4,6 @@ WORKDIR /matcha_backend
 
 COPY . .
 RUN npm install
+RUN sleep 60
 
 CMD [ "npm", "start" ]

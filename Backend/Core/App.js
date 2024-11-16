@@ -4,7 +4,7 @@ import 'dotenv/config';
 // Routers:
 import AuthRouter from "../Routes/AuthRouter.js";
 
-class App {
+export default class App {
     constructor() {
         this.app = express();
         this.PORT = process.env.BACKEND_PORT ?? 3001;
@@ -30,5 +30,3 @@ class App {
         this.app.use(`${this.API_PREFIX}/auth`, AuthRouter.createRouter());
     }
 }
-
-export default App;

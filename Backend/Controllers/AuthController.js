@@ -1,6 +1,6 @@
 import UserModel from "../Models/UserModel.js";
 
-class AuthController {
+export default class AuthController {
     static userModel = new UserModel();
 
     static testController(req, res) {
@@ -12,5 +12,3 @@ class AuthController {
         return res.json({ users: users });
     }
 }
-
-export default AuthController;

@@ -1,22 +1,15 @@
-import connectToDataBase from "../Utils/dataBaseConnection.js";
+import db from "../Utils/dataBaseConnection.js";
 
-const client = connectToDataBase();
-
-class Model {
-    #client;
-    #table;
-
-    constructor(table, client) {
-        this.#client = client;
-        this.#table = table;
+export default class Model {
+    constructor(table) {
+        this.db = db;
+        this.table = table;
     }
 
     async getAll() {
-        const [result] = await this.#client.query(`SELECT * FROM ${this.#table}`);
+        const [result] = await this.db.query(`SELECT * FROM ${this.table}`);
         if (result.length() === 0) return [];
 
         return result;
     }
 }
-
-export default Model;

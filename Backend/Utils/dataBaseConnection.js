@@ -1,34 +1,24 @@
+import dotenv from 'dotenv';
 import pg from 'pg';
 const { Client } = pg;
 
-// Get environment variables
-const {
-    POSTGRESQL_HOST,
-    POSTGRESQL_PORT,
-    POSTGRESQL_USER,
-    POSTGRESQL_PASSWORD,
-    POSTGRESQL_DATABASE } = process.env;
+dotenv.config();
 
-const CONFIG = {
-    host: POSTGRESQL_HOST,
-    port: POSTGRESQL_PORT,
-    user: POSTGRESQL_USER,
-    password: POSTGRESQL_PASSWORD,
-    database: POSTGRESQL_DATABASE
-};
+process.env;
 
-async function connectToDataBase() {
-    const client = new Client(CONFIG);
+const db = new Client({
+    host: process.env.POSTGRESQL_HOST,
+    user: process.env.POSTGRESQL_USER,
+    password: process.env.POSTGRESQL_PASSWORD,
+    database: process.env.POSTGRESQL_DATABASE,
+    port: parseInt(process.env.POSTGRESQL_PORT ?? '5432'),
+});
 
-    try {
-        await client.connect();
-        console.log('Connecto to PostgreSQL');
-    } catch (err) {
-        await client.end();
-        console.error('Connection error: ', err.stack);
-    }
-
-    return client;
+async function connectToDatabase() {
+    await db.connect();
+    console.log('Connected to the database.');
 }
 
-export default connectToDataBase;
+connectToDatabase();
+
+export default db;

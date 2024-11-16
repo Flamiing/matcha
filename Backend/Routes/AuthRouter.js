@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import AuthController from "../Controllers/AuthController.js";
 
-class AuthRouter {
+export default class AuthRouter {
     static createRouter() {
         const authRouter = Router();
 
@@ -17,5 +17,3 @@ class AuthRouter {
         return authRouter;
     }
 }
-
-export default AuthRouter;

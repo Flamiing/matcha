@@ -3,6 +3,7 @@ import 'dotenv/config';
 
 // Routers:
 import AuthRouter from "../Routes/AuthRouter.js";
+import UsersRouter from "../Routes/UsersRouter.js";
 
 export default class App {
     constructor() {
@@ -28,5 +29,6 @@ export default class App {
 
     #setupRoutes() {
         this.app.use(`${this.API_PREFIX}/auth`, AuthRouter.createRouter());
+        this.app.use(`${this.API_PREFIX}/users`, UsersRouter.createRouter());
     }
 }

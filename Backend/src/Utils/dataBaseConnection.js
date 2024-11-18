@@ -2,10 +2,6 @@ import dotenv from 'dotenv';
 import pg from 'pg';
 const { Client } = pg;
 
-dotenv.config();
-
-process.env;
-
 const db = new Client({
     host: process.env.POSTGRESQL_HOST,
     user: process.env.POSTGRESQL_USER,
@@ -15,8 +11,12 @@ const db = new Client({
 });
 
 async function connectToDatabase() {
-    await db.connect();
-    console.log('Connected to the database.');
+    try {
+        await db.connect();
+        console.log('Connected to the database.');
+    } catch (error) {
+        console.error('Could not connect to the database: ', error.message);
+    }
 }
 
 connectToDatabase();

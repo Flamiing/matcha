@@ -15,6 +15,11 @@ services:
             POSTGRESQL_USER: ${POSTGRESQL_USER}
             POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
             POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE}
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
         restart: on-failure
         ports:
             - "5432:5432"
@@ -35,7 +40,8 @@ services:
         ports:
             - "3001:3001"
         depends_on:
-            - postgresql
+            postgresql:
+              condition: service_healthy
 
     frontend:
         container_name: frontend

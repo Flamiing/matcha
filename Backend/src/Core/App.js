@@ -4,6 +4,7 @@ import 'dotenv/config';
 // Routers:
 import AuthRouter from "../Routes/AuthRouter.js";
 import UsersRouter from "../Routes/UsersRouter.js";
+import { corsMiddleware } from '../Middlewares/Cors.js';
 
 export default class App {
     constructor() {
@@ -25,6 +26,7 @@ export default class App {
     #setupMiddleware() {
         this.app.disable('x-powered-by') // Disable 'x-powered-by' header
         this.app.use(json());
+        this.app.use(corsMiddleware());
     }
 
     #setupRoutes() {

@@ -1,4 +1,4 @@
-import Model from "../Core/Model.js"
+import Model from '../Core/Model.js';
 
 class UserModel extends Model {
     constructor() {

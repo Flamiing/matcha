@@ -1,5 +1,3 @@
 import z from 'zod';
 
-const userSchema = z.object({
-    
-});
+const userSchema = z.object({});

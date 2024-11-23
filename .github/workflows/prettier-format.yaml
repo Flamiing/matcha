@@ -7,7 +7,7 @@ on:
       - synchronize
 
 jobs:
-  PrettierFormat:
+  prettier-format:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,11 +21,11 @@ jobs:
         id: extract_branch
 
       - name: Install Dependencies - Backend
-        working-directory: ./backend
+        working-directory: Backend
         run: npm install
 
       - name: Run Prettier - Backend
-        working-directory: ./backend
+        working-directory: Backend
         run: |
           npm run format
       

@@ -1,6 +1,6 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import AuthController from "../Controllers/AuthController.js";
+import AuthController from '../Controllers/AuthController.js';
 
 export default class AuthRouter {
     static createRouter() {

@@ -3,8 +3,8 @@ import { corsMiddleware } from '../Middlewares/Cors.js';
 import 'dotenv/config';
 
 // Routers:
-import AuthRouter from "../Routes/AuthRouter.js";
-import UsersRouter from "../Routes/UsersRouter.js";
+import AuthRouter from '../Routes/AuthRouter.js';
+import UsersRouter from '../Routes/UsersRouter.js';
 
 export default class App {
     constructor() {
@@ -19,12 +19,12 @@ export default class App {
 
     startApp() {
         this.app.listen(this.PORT, () => {
-            console.log(`Server listening on http://localhost:${this.PORT}`)
-        })
+            console.log(`Server listening on http://localhost:${this.PORT}`);
+        });
     }
 
     #setupMiddleware() {
-        this.app.disable('x-powered-by') // Disable 'x-powered-by' header
+        this.app.disable('x-powered-by'); // Disable 'x-powered-by' header
         this.app.use(json());
         this.app.use(corsMiddleware());
     }

@@ -17,8 +17,8 @@ export default class UsersRouter {
         router.patch('/:id', UsersController.updateUser);
 
         // DELETE:
-        router.delete('/:id', UsersController.deleteUser)
+        router.delete('/:id', UsersController.deleteUser);
 
-        return router
+        return router;
     }
 }

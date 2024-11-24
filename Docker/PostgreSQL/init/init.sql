@@ -10,7 +10,7 @@ CREATE TABLE users (
 	password VARCHAR(255) NOT NULL,
 	age INTEGER CHECK (age >= 0),
 	biography TEXT,
-	profile_picture VARCHAR(255),
+	profile_picture INTEGER REFERENCES images(id) ON DELETE SET NULL,
 	location VARCHAR(100),
 	fame INTEGER DEFAULT 0,
 	last_online TIMESTAMP,
@@ -19,7 +19,7 @@ CREATE TABLE users (
 	sexual_preference gender_preference_enum
 );
 
-CREATE TABLE user_images (
+CREATE TABLE images (
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	image_path VARCHAR(255) NOT NULL
@@ -59,7 +59,7 @@ CREATE TABLE blocked_users (
 	UNIQUE(user_id, blocked_user)
 );
 
-CREATE TABLE fake_reports (
+CREATE TABLE reports (
 	id SERIAL PRIMARY KEY,
 	reporter INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	reported INTEGER REFERENCES users(id) ON DELETE CASCADE,

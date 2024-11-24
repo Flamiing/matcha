@@ -97,4 +97,23 @@ export default class Model {
             return null;
         }
     }
+
+    async getByReference(reference) {
+        const referenceName = Object.keys(reference)[0];
+        const referenceValue = Object.values(reference)[0];
+
+        const query = {
+            text: `SELECT * FROM ${this.table} WHERE ${referenceName} = $1;`,
+            values: [referenceValue],
+        };
+
+        try {
+            const result = await this.db.query(query);
+            if (result.rows.length === 0) return [];
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error making the query: ', error.message);
+            return null;
+        }
+    }
 }

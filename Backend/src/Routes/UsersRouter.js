@@ -8,6 +8,7 @@ export default class UsersRouter {
 
         // GET:
         router.get('/', UsersController.getAllUsers);
+        router.get('/test', UsersController.testController);
         router.get('/:id', UsersController.getUserById);
 
         // POST:

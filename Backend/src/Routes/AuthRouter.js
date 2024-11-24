@@ -3,12 +3,12 @@ import { Router } from 'express';
 import AuthController from '../Controllers/AuthController.js';
 
 export default class AuthRouter {
-    static createRouter()  {
+    static createRouter() {
         const router = Router();
 
         // GET:
         router.get('/', (req, res) => {
-            res.send("Hello World! TEST");
+            res.send('Hello World! TEST');
         });
         router.get('/protectedTest', AuthController.protectedTest);
 
@@ -19,5 +19,4 @@ export default class AuthRouter {
 
         return router;
     }
-    
 }

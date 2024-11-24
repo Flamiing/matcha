@@ -2,20 +2,18 @@ import UserModel from '../Models/UserModel.js';
 
 export default class AuthController {
     static login(req, res) {
-        res.send('Login')
+        res.send('Login');
     }
-    
+
     static register(req, res) {
         // TODO: Validate data
         // TODO: Validate that unique params are not already in the database
-        res.send('Register')
+        res.send('Register');
     }
 
     static logout(req, res) {
-        res.send('Logout')
+        res.send('Logout');
     }
 
-    static protectedTest(req, res) {
-
-    }
+    static protectedTest(req, res) {}
 }

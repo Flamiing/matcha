@@ -18,7 +18,7 @@ export default class AuthController {
         const { email, username } = user.data;
         const isUnique = await UserModel.findOne({ email, username });
         if (isUnique) {
-            console.log(user.data)
+            console.log(user.data);
             const result = await UserModel.create({ input: user.data });
             return res.send('Registered.');
         }

@@ -1,18 +1,27 @@
 import UserModel from '../Models/UserModel.js';
-import UserValidator from '../Validators/UserValidator.js';
+import { validateUser } from '../Schemas/userSchema.js';
 
 export default class AuthController {
     static login(req, res) {
         res.send('Login');
     }
 
-    static register(req, res) {
-        // TODO: Validate data
-        const user = req.body;
-        console.log('User: ', user);
-        UserValidator.validate(user);
-        // TODO: Validate that unique params are not already in the database
-        res.send('Register');
+    static async register(req, res) {
+        // Validate input
+        const user = validateUser(req.body);
+        if (!user.success) {
+            const errorMessage = user.error.errors[0].message;
+            return res.status(400).json({ error: errorMessage })
+        }
+        
+        // Check for duplicated email or username
+        const { email, username } = user.data;
+        const isUnique = await UserModel.findOne({ email, username });
+        if (isUnique) {
+            const result = await UserModel.create({ input: user.data });
+            return res.send('Registered.');
+        }
+        return res.send('Not registerd.')
     }
 
     static logout(req, res) {

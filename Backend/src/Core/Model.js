@@ -38,6 +38,7 @@ export default class Model {
     }
 
     async create({ input }) {
+        console.log(input);
         const fields = Object.keys(input).join(', ');
         const values = Object.values(input);
         const placeholders = values
@@ -56,7 +57,7 @@ export default class Model {
             return result.rows[0];
         } catch (error) {
             console.error('Error making the query: ', error.message);
-            return null;
+            return error;
         }
     }
 
@@ -111,6 +112,27 @@ export default class Model {
             const result = await this.db.query(query);
             if (result.rows.length === 0) return [];
             return result.rows[0];
+        } catch (error) {
+            console.error('Error making the query: ', error.message);
+            return null;
+        }
+    }
+
+    async findOne(input) {
+        const fields = Object.keys(input)
+            .map((key, index) => `${key} = $${index + 1}`)
+            .join(' OR ');
+        const values = Object.values(input);
+
+        const query = {
+            text: `SELECT * FROM ${this.table} WHERE ${fields};`,
+            values: values,
+        };
+
+        try {
+            const result = await this.db.query(query);
+            if (result.rows.length === 0) return true;
+            return false;
         } catch (error) {
             console.error('Error making the query: ', error.message);
             return null;

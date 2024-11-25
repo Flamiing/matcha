@@ -34,11 +34,11 @@ const userSchema = z.object({
             /^[a-zA-Z0-9._]+$/,
             'Username can only contain letters, numbers, underscores, and periods.'
         )
-        .refine((name) => !/^[-._]/.test(name), {
+        .refine((username) => !/^[-._]/.test(username), {
             message: 'Username cannot start with a special character.',
         })
         .refine(
-            (name) => !disallowedUsernames.includes(username.toLowerCase()),
+            (username) => !disallowedUsernames.includes(username.toLowerCase()),
             {
                 message: 'This username is not allowed.',
             }
@@ -58,7 +58,9 @@ const userSchema = z.object({
         .max(30, 'Last name must be 30 characters or fewer.')
         .optional(),
     password: z
-        .string({})
+        .string({
+            required_error: 'Password is required.',
+        })
         .min(8, 'Password must be at lest 8 characters long.')
         .max(16, 'Password must be 16 characters or fewer.')
         .regex(

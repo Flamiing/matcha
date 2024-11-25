@@ -1,6 +1,6 @@
 FROM node:22.11.0-bookworm
 
-WORKDIR /frontend
+WORKDIR /Frontend
 
 COPY package*.json ./
 RUN npm install

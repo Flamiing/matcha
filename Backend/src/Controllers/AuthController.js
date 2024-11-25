@@ -1,15 +1,37 @@
 import userModel from '../Models/UserModel.js';
-import { validateUser } from '../Schemas/userSchema.js';
+import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
 import ErrorMessages from '../Utils/ErrorMessages.js';
 import bcrypt from 'bcryptjs';
 
 export default class AuthController {
-    static login(req, res) {
-        res.send('Login');
+    static async login(req, res) {
+        // Validate and clean input
+        const user = validatePartialUser(req.body);
+        if (!user.success) {
+            const errorMessage = user.error.errors[0].message;
+            return res.status(400).json({ error: errorMessage });
+        }
+
+        // Checks if the user exists
+        const { username, password } = user.data;
+        const result = await userModel.findOne({ username })
+        if (result.length === 0) {
+            return res.status(400).json({ error: ErrorMessages.WRONG_USERNAME })
+        }
+
+        // Validates password
+        const isValidPassword = await bcrypt.compare(password, result.password);
+        if (!isValidPassword) {
+            return res.status(400).json({ error: ErrorMessages.WRONG_PASSWORD })
+        }
+
+        // Returns id
+        const { id } = result;
+        return res.json({ id });
     }
 
     static async register(req, res) {
-        // Validate input
+        // Validate and clean input
         var user = validateUser(req.body);
         if (!user.success) {
             const errorMessage = user.error.errors[0].message;

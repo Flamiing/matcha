@@ -29,9 +29,23 @@ export default class AuthController {
                 .json({ error: ErrorMessages.WRONG_PASSWORD });
         }
 
-        // Returns id
-        const { id } = result;
-        return res.json({ id });
+        // Returns user
+        const publicUser = {
+            id: result.id,
+            username: result.username,
+            first_name: result.first_name,
+            last_name: result.last_name,
+            age: result.age,
+            biography: result.biography,
+            profile_picture: result.profile_picture,
+            location: result.location,
+            fame: result.fame,
+            last_online: result.last_online,
+            is_online: result.is_online,
+            gender: result.gender,
+            sexual_preference: result.sexual_preference
+        }
+        return res.json({ publicUser });
     }
 
     static async register(req, res) {
@@ -42,7 +56,7 @@ export default class AuthController {
             return res.status(400).json({ error: errorMessage });
         }
 
-        // Check for duplicated email or username
+        // Check for duplicated user
         const { email, username, password } = user.data;
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
@@ -58,7 +72,9 @@ export default class AuthController {
                     .status(400)
                     .json({ error: ErrorMessages.BAD_REQUEST });
             }
-            const { id } = result;
+
+            // Returns id
+            const { id } = result
             return res.json({ id });
         }
         return res.send('Not registerd.');

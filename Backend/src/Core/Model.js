@@ -38,7 +38,6 @@ export default class Model {
     }
 
     async create({ input }) {
-        console.log(input);
         const fields = Object.keys(input).join(', ');
         const values = Object.values(input);
         const placeholders = values
@@ -52,7 +51,6 @@ export default class Model {
 
         try {
             const result = await this.db.query(query);
-            console.log(result);
             if (result.rows.length === 0) return [];
             return result.rows[0];
         } catch (error) {

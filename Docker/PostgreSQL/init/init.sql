@@ -10,7 +10,7 @@ CREATE TABLE users (
 	password VARCHAR(255) NOT NULL,
 	age INTEGER CHECK (age >= 0),
 	biography TEXT,
-	profile_picture INTEGER REFERENCES images(id) ON DELETE SET NULL,
+	profile_picture INTEGER,
 	location VARCHAR(100),
 	fame INTEGER DEFAULT 0,
 	last_online TIMESTAMP,
@@ -22,7 +22,7 @@ CREATE TABLE users (
 CREATE TABLE images (
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-	image_path VARCHAR(255) NOT NULL
+	image VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE tags (
@@ -39,10 +39,10 @@ CREATE TABLE user_tags (
 
 CREATE TABLE likes (
 	id SERIAL PRIMARY KEY,
-	liker_user INTEGER REFERENCES users(id) ON DELETE CASCADE,
-	liked_user INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	liked_by INTEGER REFERENCES users(id) ON DELETE CASCADE,
+	liked_to INTEGER REFERENCES users(id) ON DELETE CASCADE,
 	time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	UNIQUE(liker_user, liked_user)
+	UNIQUE(liked_by, liked_to)
 );
 
 CREATE TABLE visit_history (
@@ -78,5 +78,9 @@ CREATE TABLE message (
     id SERIAL PRIMARY KEY,
     chat_id INTEGER REFERENCES chats(id) ON DELETE CASCADE,
     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    message TEXT NOT NULL
+    content TEXT NOT NULL
 );
+
+ALTER TABLE users
+ADD CONSTRAINT fk_profile_picture
+FOREIGN KEY (profile_picture) REFERENCES images(id) ON DELETE SET NULL;

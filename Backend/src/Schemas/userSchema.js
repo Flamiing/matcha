@@ -59,8 +59,8 @@ const userSchema = z.object({
         .optional(),
     password: z
         .string({})
-        .min(8, 'Passoword must be at lest 8 characters long.')
-        .max(16, 'Passoword must be 16 characters or fewer.')
+        .min(8, 'Password must be at lest 8 characters long.')
+        .max(16, 'Password must be 16 characters or fewer.')
         .regex(
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*[+.\-_*$@!?%&])(?=.*\d)[A-Za-z\d+.\-_*$@!?%&]+$/,
             { message: 'Invalid password.' }

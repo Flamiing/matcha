@@ -24,9 +24,13 @@ export default class AuthController {
             user.data.password = bcrypt.hashSync(password, SALT_ROUNDS); // Encrypt password
             const result = await UserModel.create({ input: user.data });
             if (result === null) {
-                return res.status(500).json({ error: ErrorMessages.INTERNAL_SERVER_ERROR })
+                return res
+                    .status(500)
+                    .json({ error: ErrorMessages.INTERNAL_SERVER_ERROR });
             } else if (result.length === 0) {
-                return res.status(400).json({ error: ErrorMessages.BAD_REQUEST })
+                return res
+                    .status(400)
+                    .json({ error: ErrorMessages.BAD_REQUEST });
             }
             const { id } = result;
             return res.json({ id });

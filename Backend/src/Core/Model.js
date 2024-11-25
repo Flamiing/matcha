@@ -51,12 +51,11 @@ export default class Model {
 
         try {
             const result = await this.db.query(query);
-            console.log(result);
             if (result.rows.length === 0) return [];
             return result.rows[0];
         } catch (error) {
             console.error('Error making the query: ', error.message);
-            return null;
+            return error;
         }
     }
 
@@ -92,6 +91,46 @@ export default class Model {
             const result = await this.db.query(query);
             if (result.rows[0] === undefined) return false;
             return true;
+        } catch (error) {
+            console.error('Error making the query: ', error.message);
+            return null;
+        }
+    }
+
+    async getByReference(reference) {
+        const referenceName = Object.keys(reference)[0];
+        const referenceValue = Object.values(reference)[0];
+
+        const query = {
+            text: `SELECT * FROM ${this.table} WHERE ${referenceName} = $1;`,
+            values: [referenceValue],
+        };
+
+        try {
+            const result = await this.db.query(query);
+            if (result.rows.length === 0) return [];
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error making the query: ', error.message);
+            return null;
+        }
+    }
+
+    async findOne(input) {
+        const fields = Object.keys(input)
+            .map((key, index) => `${key} = $${index + 1}`)
+            .join(' OR ');
+        const values = Object.values(input);
+
+        const query = {
+            text: `SELECT * FROM ${this.table} WHERE ${fields};`,
+            values: values,
+        };
+
+        try {
+            const result = await this.db.query(query);
+            if (result.rows.length === 0) return true;
+            return false;
         } catch (error) {
             console.error('Error making the query: ', error.message);
             return null;

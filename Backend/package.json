@@ -4,6 +4,7 @@
     "main": "app.js",
     "scripts": {
         "start": "node ./src/app.js",
+        "dev": "node --watch ./src/app.js",
         "format": "prettier --write ."
     },
     "keywords": [],

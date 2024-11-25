@@ -8,7 +8,7 @@ export default class AuthController {
 
     static register(req, res) {
         // TODO: Validate data
-        const user = req.body
+        const user = req.body;
         console.log('User: ', user);
         UserValidator.validate(user);
         // TODO: Validate that unique params are not already in the database

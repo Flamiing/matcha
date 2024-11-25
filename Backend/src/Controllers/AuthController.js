@@ -1,4 +1,4 @@
-import UserModel from '../Models/UserModel.js';
+import userModel from '../Models/UserModel.js';
 import { validateUser } from '../Schemas/userSchema.js';
 import ErrorMessages from '../Utils/ErrorMessages.js';
 import bcrypt from 'bcryptjs';
@@ -18,11 +18,11 @@ export default class AuthController {
 
         // Check for duplicated email or username
         const { email, username, password } = user.data;
-        const isUnique = await UserModel.findOne({ email, username });
+        const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
-            const { SALT_ROUNDS } = parseInt(process.env);
-            user.data.password = bcrypt.hashSync(password, SALT_ROUNDS); // Encrypt password
-            const result = await UserModel.create({ input: user.data });
+            const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
+            user.data.password = await bcrypt.hash(password, SALT_ROUNDS); // Encrypt password
+            const result = await userModel.create({ input: user.data });
             if (result === null) {
                 return res
                     .status(500)

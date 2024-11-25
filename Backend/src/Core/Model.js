@@ -30,7 +30,7 @@ export default class Model {
         try {
             const result = await this.db.query(query);
             if (result.rows.length === 0) return [];
-            return result.rows;
+            return result.rows[0];
         } catch (error) {
             console.error('Error making the query: ', error.message);
             return null;
@@ -129,8 +129,8 @@ export default class Model {
 
         try {
             const result = await this.db.query(query);
-            if (result.rows.length === 0) return true;
-            return false;
+            if (result.rows.length === 0) return [];
+            return result.rows[0];
         } catch (error) {
             console.error('Error making the query: ', error.message);
             return null;

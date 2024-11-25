@@ -43,8 +43,8 @@ export default class AuthController {
             last_online: result.last_online,
             is_online: result.is_online,
             gender: result.gender,
-            sexual_preference: result.sexual_preference
-        }
+            sexual_preference: result.sexual_preference,
+        };
         return res.json({ publicUser });
     }
 
@@ -74,7 +74,7 @@ export default class AuthController {
             }
 
             // Returns id
-            const { id } = result
+            const { id } = result;
             return res.json({ id });
         }
         return res.send('Not registerd.');

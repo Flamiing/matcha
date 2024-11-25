@@ -14,15 +14,19 @@ export default class AuthController {
 
         // Checks if the user exists
         const { username, password } = user.data;
-        const result = await userModel.findOne({ username })
+        const result = await userModel.findOne({ username });
         if (result.length === 0) {
-            return res.status(400).json({ error: ErrorMessages.WRONG_USERNAME })
+            return res
+                .status(400)
+                .json({ error: ErrorMessages.WRONG_USERNAME });
         }
 
         // Validates password
         const isValidPassword = await bcrypt.compare(password, result.password);
         if (!isValidPassword) {
-            return res.status(400).json({ error: ErrorMessages.WRONG_PASSWORD })
+            return res
+                .status(400)
+                .json({ error: ErrorMessages.WRONG_PASSWORD });
         }
 
         // Returns id

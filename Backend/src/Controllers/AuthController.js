@@ -4,12 +4,16 @@ import bcrypt from 'bcryptjs';
 // Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
-import ErrorMessages from '../Utils/ErrorMessages.js';
+import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
 import createJWT from '../Utils/createJWT.js';
 
 export default class AuthController {
     static async login(req, res) {
+        // Check if user is logged in
+        const statusCheck = AuthController.isUserLogged(req);
+        if (statusCheck.isLoggedIn) return res.json({ message: StatusMessage.ALREADY_LOGGED_IN })
+
         // Validate and clean input
         const validatedUser = validatePartialUser(req.body);
         if (!validatedUser.success) {
@@ -23,7 +27,7 @@ export default class AuthController {
         if (user.length === 0) {
             return res
                 .status(401)
-                .json({ error: ErrorMessages.WRONG_USERNAME });
+                .json({ error: StatusMessage.WRONG_USERNAME });
         }
 
         // Validates password
@@ -31,7 +35,7 @@ export default class AuthController {
         if (!isValidPassword) {
             return res
                 .status(401)
-                .json({ error: ErrorMessages.WRONG_PASSWORD });
+                .json({ error: StatusMessage.WRONG_PASSWORD });
         }
 
         // Create JWT
@@ -50,6 +54,10 @@ export default class AuthController {
     }
 
     static async register(req, res) {
+        // Check if user is logged in
+        const statusCheck = AuthController.isUserLogged(req);
+        if (statusCheck.isLoggedIn) return res.json({ message: StatusMessage.ALREADY_LOGGED_IN })
+
         // Validate and clean input
         var validatedUser = validateUser(req.body);
         if (!validatedUser.success) {
@@ -71,11 +79,11 @@ export default class AuthController {
             if (user === null) {
                 return res
                     .status(500)
-                    .json({ error: ErrorMessages.INTERNAL_SERVER_ERROR });
+                    .json({ error: StatusMessage.INTERNAL_SERVER_ERROR });
             } else if (user.length === 0) {
                 return res
                     .status(400)
-                    .json({ error: ErrorMessages.BAD_REQUEST });
+                    .json({ error: StatusMessage.BAD_REQUEST });
             }
 
             // Create JWT
@@ -92,22 +100,30 @@ export default class AuthController {
                 })
                 .json({ publicUser });
         }
-        return res.send('Not registerd.');
+        return res.json({ message: 'Not registerd.' });
     }
 
     static logout(req, res) {
-        const { user } = req.session;
-        if (!user)
-            return res.json({ success: false, message: 'Already logged out.' });
+        // Check if user is logged in
+        const statusCheck = AuthController.isUserLogged(req);
+        if (!statusCheck.isLoggedIn) return res.json({ success: false, message: StatusMessage.ALREADY_LOGGED_OUT });
+        
         return res
             .clearCookie('access_token')
             .json({ sucess: true, message: 'Logout successful!' });
     }
 
     static protected(req, res) {
-        const { user } = req.session;
-        if (!user) return res.status(401).send('Access not authorized.');
+        // Check if user is logged in
+        const statusCheck = AuthController.isUserLogged(req);
+        if (!statusCheck.isLoggedIn) return res.status(401).json({ error: StatusMessage.ACCESS_NOT_AUTHORIZED });
 
-        res.send(user);
+        res.json({ id: statusCheck.user.id, username: statusCheck.user.username });
+    }
+
+    static isUserLogged(req) {
+        const { user } = req.session;
+        if (user) return { isLoggedIn: true, user: user };
+        return { isLoggedIn: false };
     }
 }

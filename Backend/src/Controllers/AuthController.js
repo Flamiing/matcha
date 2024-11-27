@@ -1,11 +1,12 @@
 // Third-Party Imports:
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 // Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
 import ErrorMessages from '../Utils/ErrorMessages.js';
+import getPublicUser from '../Utils/getPublicUser.js';
+import createJWT from '../Utils/createJWT.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -33,32 +34,11 @@ export default class AuthController {
                 .json({ error: ErrorMessages.WRONG_PASSWORD });
         }
 
-        // Create JWT Token
-        const { JWT_SECRET_KEY } = process.env;
-        const token = jwt.sign(
-            { id: user.id, username: user.username },
-            JWT_SECRET_KEY,
-            {
-                expiresIn: '1h',
-            }
-        );
+        // Create JWT
+        const token = createJWT(user);
 
         // Returns user
-        const publicUser = {
-            id: user.id,
-            username: user.username,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            age: user.age,
-            biography: user.biography,
-            profile_picture: user.profile_picture,
-            location: user.location,
-            fame: user.fame,
-            last_online: user.last_online,
-            is_online: user.is_online,
-            gender: user.gender,
-            sexual_preference: user.sexual_preference,
-        };
+        const publicUser = getPublicUser(user);
         return res
             .cookie('access_token', token, {
                 httpOnly: true, // Cookie only accessible from the server
@@ -82,10 +62,11 @@ export default class AuthController {
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
             const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
+            // Encrypt password
             validatedUser.data.password = await bcrypt.hash(
                 password,
                 SALT_ROUNDS
-            ); // Encrypt password
+            );
             const user = await userModel.create({ input: validatedUser.data });
             if (user === null) {
                 return res
@@ -97,9 +78,17 @@ export default class AuthController {
                     .json({ error: ErrorMessages.BAD_REQUEST });
             }
 
+            // Create JWT 
+            const token = createJWT(user);
+
             // Returns id
-            const { id } = user;
-            return res.json({ id });
+            const publicUser = getPublicUser(user);
+            return res.cookie('access_token', token, {
+                httpOnly: true, // Cookie only accessible from the server
+                secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
+                sameSite: 'strict', // Cookie only accessible from the same domain
+                maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
+            }).json({ publicUser });
         }
         return res.send('Not registerd.');
     }

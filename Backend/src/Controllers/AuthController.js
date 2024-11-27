@@ -109,19 +109,9 @@ export default class AuthController {
     }
 
     static protected(req, res) {
-        // TODO: Check if user is logged in
-        const token = req.cookies.access_token;
-        if (!token) {
-            return res.status(403).send('Access not authorized.');
-        }
+        const { user } = req.session
+        if (!user) return res.status(401).send('Access not authorized.');
 
-        try {
-            const { JWT_SECRET_KEY } = process.env;
-            const data = jwt.verify(token, JWT_SECRET_KEY);
-            res.send(data);
-        } catch (error) {
-            res.status(401).send('Access not authorized.');
-        }
-        // TODO: Else 401
+        res.send(user);
     }
 }

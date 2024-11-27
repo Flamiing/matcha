@@ -105,7 +105,9 @@ export default class AuthController {
     }
 
     static logout(req, res) {
-        res.send('Logout');
+        const { user } = req.session;
+        if (!user) return res.json({ success: false, message: 'Already logged out.' });
+        return res.clearCookie('access_token').json({ sucess: true, message: 'Logout successful!' })
     }
 
     static protected(req, res) {

@@ -12,7 +12,8 @@ export default class AuthController {
     static async login(req, res) {
         // Check if user is logged in
         const statusCheck = AuthController.isUserLogged(req);
-        if (statusCheck.isLoggedIn) return res.json({ message: StatusMessage.ALREADY_LOGGED_IN })
+        if (statusCheck.isLoggedIn)
+            return res.json({ message: StatusMessage.ALREADY_LOGGED_IN });
 
         // Validate and clean input
         const validatedUser = validatePartialUser(req.body);
@@ -56,7 +57,8 @@ export default class AuthController {
     static async register(req, res) {
         // Check if user is logged in
         const statusCheck = AuthController.isUserLogged(req);
-        if (statusCheck.isLoggedIn) return res.json({ message: StatusMessage.ALREADY_LOGGED_IN })
+        if (statusCheck.isLoggedIn)
+            return res.json({ message: StatusMessage.ALREADY_LOGGED_IN });
 
         // Validate and clean input
         var validatedUser = validateUser(req.body);
@@ -106,8 +108,12 @@ export default class AuthController {
     static logout(req, res) {
         // Check if user is logged in
         const statusCheck = AuthController.isUserLogged(req);
-        if (!statusCheck.isLoggedIn) return res.json({ success: false, message: StatusMessage.ALREADY_LOGGED_OUT });
-        
+        if (!statusCheck.isLoggedIn)
+            return res.json({
+                success: false,
+                message: StatusMessage.ALREADY_LOGGED_OUT,
+            });
+
         return res
             .clearCookie('access_token')
             .json({ sucess: true, message: 'Logout successful!' });
@@ -116,9 +122,15 @@ export default class AuthController {
     static protected(req, res) {
         // Check if user is logged in
         const statusCheck = AuthController.isUserLogged(req);
-        if (!statusCheck.isLoggedIn) return res.status(401).json({ error: StatusMessage.ACCESS_NOT_AUTHORIZED });
+        if (!statusCheck.isLoggedIn)
+            return res
+                .status(401)
+                .json({ error: StatusMessage.ACCESS_NOT_AUTHORIZED });
 
-        res.json({ id: statusCheck.user.id, username: statusCheck.user.username });
+        res.json({
+            id: statusCheck.user.id,
+            username: statusCheck.user.username,
+        });
     }
 
     static isUserLogged(req) {

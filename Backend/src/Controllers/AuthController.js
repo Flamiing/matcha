@@ -35,9 +35,13 @@ export default class AuthController {
 
         // Create JWT Token
         const { JWT_SECRET_KEY } = process.env;
-        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET_KEY, {
-            expiresIn: '1h'
-        })
+        const token = jwt.sign(
+            { id: user.id, username: user.username },
+            JWT_SECRET_KEY,
+            {
+                expiresIn: '1h',
+            }
+        );
 
         // Returns user
         const publicUser = {
@@ -60,7 +64,7 @@ export default class AuthController {
                 httpOnly: true, // Cookie only accessible from the server
                 secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
                 sameSite: 'strict', // Cookie only accessible from the same domain
-                maxAge: 1000 * 60 * 60 // Cookie only valid for 1h
+                maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
             })
             .json({ publicUser });
     }
@@ -78,7 +82,10 @@ export default class AuthController {
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
             const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
-            validatedUser.data.password = await bcrypt.hash(password, SALT_ROUNDS); // Encrypt password
+            validatedUser.data.password = await bcrypt.hash(
+                password,
+                SALT_ROUNDS
+            ); // Encrypt password
             const user = await userModel.create({ input: validatedUser.data });
             if (user === null) {
                 return res

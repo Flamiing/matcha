@@ -78,17 +78,19 @@ export default class AuthController {
                     .json({ error: ErrorMessages.BAD_REQUEST });
             }
 
-            // Create JWT 
+            // Create JWT
             const token = createJWT(user);
 
             // Returns id
             const publicUser = getPublicUser(user);
-            return res.cookie('access_token', token, {
-                httpOnly: true, // Cookie only accessible from the server
-                secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
-                sameSite: 'strict', // Cookie only accessible from the same domain
-                maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
-            }).json({ publicUser });
+            return res
+                .cookie('access_token', token, {
+                    httpOnly: true, // Cookie only accessible from the server
+                    secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
+                    sameSite: 'strict', // Cookie only accessible from the same domain
+                    maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
+                })
+                .json({ publicUser });
         }
         return res.send('Not registerd.');
     }

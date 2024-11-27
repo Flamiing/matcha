@@ -1,9 +1,11 @@
+// Local Imports:
 import userModel from '../Models/UserModel.js';
 import ErrorMessages from '../Utils/ErrorMessages.js';
 
 export default class UsersController {
-    static testController(req, res) {
-        return res.json({ test: 'This is a test return' });
+    static async testController(req, res) {
+        const result = await userModel.getByReference(req.query);
+        return res.json({ result });
     }
 
     static async getAllUsers(req, res) {

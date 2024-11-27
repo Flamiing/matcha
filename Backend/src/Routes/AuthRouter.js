@@ -1,5 +1,7 @@
+// Third-Party Imports:
 import { Router } from 'express';
 
+// Local Imports:
 import AuthController from '../Controllers/AuthController.js';
 
 export default class AuthRouter {
@@ -10,7 +12,7 @@ export default class AuthRouter {
         router.get('/', (req, res) => {
             res.send('Hello World! TEST');
         });
-        router.get('/protectedTest', AuthController.protectedTest);
+        router.get('/protected', AuthController.protected);
 
         // POST:
         router.post('/login', AuthController.login);

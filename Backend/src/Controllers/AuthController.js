@@ -1,80 +1,97 @@
+// Third-Party Imports:
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+// Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
 import ErrorMessages from '../Utils/ErrorMessages.js';
-import bcrypt from 'bcryptjs';
 
 export default class AuthController {
     static async login(req, res) {
         // Validate and clean input
-        const user = validatePartialUser(req.body);
-        if (!user.success) {
-            const errorMessage = user.error.errors[0].message;
+        const validatedUser = validatePartialUser(req.body);
+        if (!validatedUser.success) {
+            const errorMessage = validatedUser.error.errors[0].message;
             return res.status(400).json({ error: errorMessage });
         }
 
         // Checks if the user exists
-        const { username, password } = user.data;
-        const result = await userModel.findOne({ username });
-        if (result.length === 0) {
+        const { username, password } = validatedUser.data;
+        const user = await userModel.findOne({ username });
+        if (user.length === 0) {
             return res
-                .status(400)
+                .status(401)
                 .json({ error: ErrorMessages.WRONG_USERNAME });
         }
 
         // Validates password
-        const isValidPassword = await bcrypt.compare(password, result.password);
+        const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
             return res
-                .status(400)
+                .status(401)
                 .json({ error: ErrorMessages.WRONG_PASSWORD });
         }
 
+        // Create JWT Token
+        const { JWT_SECRET_KEY } = process.env;
+        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET_KEY, {
+            expiresIn: '1h'
+        })
+
         // Returns user
         const publicUser = {
-            id: result.id,
-            username: result.username,
-            first_name: result.first_name,
-            last_name: result.last_name,
-            age: result.age,
-            biography: result.biography,
-            profile_picture: result.profile_picture,
-            location: result.location,
-            fame: result.fame,
-            last_online: result.last_online,
-            is_online: result.is_online,
-            gender: result.gender,
-            sexual_preference: result.sexual_preference,
+            id: user.id,
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            age: user.age,
+            biography: user.biography,
+            profile_picture: user.profile_picture,
+            location: user.location,
+            fame: user.fame,
+            last_online: user.last_online,
+            is_online: user.is_online,
+            gender: user.gender,
+            sexual_preference: user.sexual_preference,
         };
-        return res.json({ publicUser });
+        return res
+            .cookie('access_token', token, {
+                httpOnly: true, // Cookie only accessible from the server
+                secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
+                sameSite: 'strict', // Cookie only accessible from the same domain
+                maxAge: 1000 * 60 * 60 // Cookie only valid for 1h
+            })
+            .json({ publicUser });
     }
 
     static async register(req, res) {
         // Validate and clean input
-        var user = validateUser(req.body);
-        if (!user.success) {
-            const errorMessage = user.error.errors[0].message;
+        var validatedUser = validateUser(req.body);
+        if (!validatedUser.success) {
+            const errorMessage = validatedUser.error.errors[0].message;
             return res.status(400).json({ error: errorMessage });
         }
 
         // Check for duplicated user
-        const { email, username, password } = user.data;
+        const { email, username, password } = validatedUser.data;
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
             const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
-            user.data.password = await bcrypt.hash(password, SALT_ROUNDS); // Encrypt password
-            const result = await userModel.create({ input: user.data });
-            if (result === null) {
+            validatedUser.data.password = await bcrypt.hash(password, SALT_ROUNDS); // Encrypt password
+            const user = await userModel.create({ input: validatedUser.data });
+            if (user === null) {
                 return res
                     .status(500)
                     .json({ error: ErrorMessages.INTERNAL_SERVER_ERROR });
-            } else if (result.length === 0) {
+            } else if (user.length === 0) {
                 return res
                     .status(400)
                     .json({ error: ErrorMessages.BAD_REQUEST });
             }
 
             // Returns id
-            const { id } = result;
+            const { id } = user;
             return res.json({ id });
         }
         return res.send('Not registerd.');
@@ -84,5 +101,20 @@ export default class AuthController {
         res.send('Logout');
     }
 
-    static protectedTest(req, res) {}
+    static protected(req, res) {
+        // TODO: Check if user is logged in
+        const token = req.cookies.access_token;
+        if (!token) {
+            return res.status(403).send('Access not authorized.');
+        }
+
+        try {
+            const { JWT_SECRET_KEY } = process.env;
+            const data = jwt.verify(token, JWT_SECRET_KEY);
+            res.send(data);
+        } catch (error) {
+            res.status(401).send('Access not authorized.');
+        }
+        // TODO: Else 401
+    }
 }

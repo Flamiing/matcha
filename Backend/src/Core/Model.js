@@ -1,3 +1,4 @@
+// Local Imports:
 import db from '../Utils/dataBaseConnection.js';
 
 export default class Model {

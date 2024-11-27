@@ -12,4 +12,4 @@ export const sessionMiddleware = () => (req, res, next) => {
     } catch {}
 
     next(); // Go to the next route or middleware
-} 
+};

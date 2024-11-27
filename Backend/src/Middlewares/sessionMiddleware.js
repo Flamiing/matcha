@@ -1,7 +1,7 @@
 // Third-Party Imports:
 import jwt from 'jsonwebtoken';
 
-export const sessionMiddleware = (req, res, next) => {
+export const sessionMiddleware = () => (req, res, next) => {
     const token = req.cookies.access_token;
 
     req.session = { user: null };
@@ -12,4 +12,4 @@ export const sessionMiddleware = (req, res, next) => {
     } catch {}
 
     next(); // Go to the next route or middleware
-};
+} 

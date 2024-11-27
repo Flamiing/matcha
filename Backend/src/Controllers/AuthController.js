@@ -109,7 +109,7 @@ export default class AuthController {
     }
 
     static protected(req, res) {
-        const { user } = req.session
+        const { user } = req.session;
         if (!user) return res.status(401).send('Access not authorized.');
 
         res.send(user);

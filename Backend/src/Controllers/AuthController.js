@@ -13,7 +13,10 @@ export default class AuthController {
     static async login(req, res) {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
-        if (authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_IN })
+        if (authStatus.isAuthorized)
+            return res
+                .status(400)
+                .json({ msg: StatusMessage.ALREADY_LOGGED_IN });
 
         // Validate and clean input
         const validatedUser = validatePartialUser(req.body);
@@ -26,17 +29,13 @@ export default class AuthController {
         const { username, password } = validatedUser.data;
         const user = await userModel.findOne({ username });
         if (user.length === 0) {
-            return res
-                .status(401)
-                .json({ msg: StatusMessage.WRONG_USERNAME });
+            return res.status(401).json({ msg: StatusMessage.WRONG_USERNAME });
         }
 
         // Validates password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
-            return res
-                .status(401)
-                .json({ msg: StatusMessage.WRONG_PASSWORD });
+            return res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
         }
 
         // Create JWT
@@ -57,7 +56,10 @@ export default class AuthController {
     static async register(req, res) {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
-        if (authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_IN })
+        if (authStatus.isAuthorized)
+            return res
+                .status(400)
+                .json({ msg: StatusMessage.ALREADY_LOGGED_IN });
 
         // Validate and clean input
         var validatedUser = validateUser(req.body);
@@ -89,19 +91,22 @@ export default class AuthController {
 
             // Returns id
             const publicUser = getPublicUser(user);
-            return res
-                .status(201)
-                .json({ msg: publicUser });
+            return res.status(201).json({ msg: publicUser });
         }
 
-        return res.status(400).json({ msg: StatusMessage.USER_ALREADY_REGISTERED });
+        return res
+            .status(400)
+            .json({ msg: StatusMessage.USER_ALREADY_REGISTERED });
     }
 
     static logout(req, res) {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
-        if (!authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_OUT });
-        
+        if (!authStatus.isAuthorized)
+            return res
+                .status(400)
+                .json({ msg: StatusMessage.ALREADY_LOGGED_OUT });
+
         return res
             .clearCookie('access_token')
             .json({ msg: 'Logout successful!' });
@@ -110,14 +115,19 @@ export default class AuthController {
     static protected(req, res) {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
-        if (!authStatus.isAuthorized) return res.status(401).json({ msg: StatusMessage.ACCESS_NOT_AUTHORIZED });
+        if (!authStatus.isAuthorized)
+            return res
+                .status(401)
+                .json({ msg: StatusMessage.ACCESS_NOT_AUTHORIZED });
 
-        res.json({ msg: {id: authStatus.user.id, username: authStatus.user.username} });
+        res.json({
+            msg: { id: authStatus.user.id, username: authStatus.user.username },
+        });
     }
 
     static status(req, res) {
         const authStatus = checkAuthStatus(req);
         if (authStatus.isAuthorized) return res.status(200).json();
-        return res.status(401).json()
+        return res.status(401).json();
     }
 }

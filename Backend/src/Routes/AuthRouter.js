@@ -13,6 +13,7 @@ export default class AuthRouter {
             res.send('Hello World! TEST');
         });
         router.get('/protected', AuthController.protected);
+        router.get('/status', AuthController.status);
 
         // POST:
         router.post('/login', AuthController.login);

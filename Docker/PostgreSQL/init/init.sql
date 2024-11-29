@@ -17,6 +17,7 @@ CREATE TABLE users (
 	fame INTEGER DEFAULT 0,
 	last_online TIMESTAMP,
 	is_online BOOLEAN DEFAULT FALSE,
+	is_confirmed BOOLEAN DEFAULT FALSE,
 	gender gender_enum,
 	sexual_preference gender_preference_enum
 );

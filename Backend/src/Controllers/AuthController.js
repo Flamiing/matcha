@@ -6,20 +6,20 @@ import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
-import createJWT from '../Utils/createJWT.js';
+import { createAccessToken } from '../Utils/jsonWebTokenUtils.js';
+import { checkAuthStatus } from '../Utils/authUtils.js';
 
 export default class AuthController {
     static async login(req, res) {
         // Check if user is logged in
-        const statusCheck = AuthController.isUserLogged(req);
-        if (statusCheck.isLoggedIn)
-            return res.json({ message: StatusMessage.ALREADY_LOGGED_IN });
+        const authStatus = checkAuthStatus(req);
+        if (authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_IN })
 
         // Validate and clean input
         const validatedUser = validatePartialUser(req.body);
         if (!validatedUser.success) {
             const errorMessage = validatedUser.error.errors[0].message;
-            return res.status(400).json({ error: errorMessage });
+            return res.status(400).json({ msg: errorMessage });
         }
 
         // Checks if the user exists
@@ -28,7 +28,7 @@ export default class AuthController {
         if (user.length === 0) {
             return res
                 .status(401)
-                .json({ error: StatusMessage.WRONG_USERNAME });
+                .json({ msg: StatusMessage.WRONG_USERNAME });
         }
 
         // Validates password
@@ -36,35 +36,34 @@ export default class AuthController {
         if (!isValidPassword) {
             return res
                 .status(401)
-                .json({ error: StatusMessage.WRONG_PASSWORD });
+                .json({ msg: StatusMessage.WRONG_PASSWORD });
         }
 
         // Create JWT
-        const token = createJWT(user);
+        const accessToken = createAccessToken(user);
 
         // Returns user
         const publicUser = getPublicUser(user);
         return res
-            .cookie('access_token', token, {
+            .cookie('access_token', accessToken, {
                 httpOnly: true, // Cookie only accessible from the server
                 secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
                 sameSite: 'strict', // Cookie only accessible from the same domain
                 maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
             })
-            .json({ publicUser });
+            .json({ msg: publicUser });
     }
 
     static async register(req, res) {
         // Check if user is logged in
-        const statusCheck = AuthController.isUserLogged(req);
-        if (statusCheck.isLoggedIn)
-            return res.json({ message: StatusMessage.ALREADY_LOGGED_IN });
+        const authStatus = checkAuthStatus(req);
+        if (authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_IN })
 
         // Validate and clean input
         var validatedUser = validateUser(req.body);
         if (!validatedUser.success) {
             const errorMessage = validatedUser.error.errors[0].message;
-            return res.status(400).json({ error: errorMessage });
+            return res.status(400).json({ msg: errorMessage });
         }
 
         // Check for duplicated user
@@ -88,54 +87,37 @@ export default class AuthController {
                     .json({ error: StatusMessage.BAD_REQUEST });
             }
 
-            // Create JWT
-            const token = createJWT(user);
-
             // Returns id
             const publicUser = getPublicUser(user);
             return res
-                .cookie('access_token', token, {
-                    httpOnly: true, // Cookie only accessible from the server
-                    secure: process.env.BACKEND_NODE_ENV === 'production', // Only accessible via https
-                    sameSite: 'strict', // Cookie only accessible from the same domain
-                    maxAge: 1000 * 60 * 60, // Cookie only valid for 1h
-                })
-                .json({ publicUser });
+                .status(201)
+                .json({ msg: publicUser });
         }
-        return res.json({ message: 'Not registerd.' });
+
+        return res.status(400).json({ msg: StatusMessage.USER_ALREADY_REGISTERED });
     }
 
     static logout(req, res) {
         // Check if user is logged in
-        const statusCheck = AuthController.isUserLogged(req);
-        if (!statusCheck.isLoggedIn)
-            return res.json({
-                success: false,
-                message: StatusMessage.ALREADY_LOGGED_OUT,
-            });
-
+        const authStatus = checkAuthStatus(req);
+        if (!authStatus.isAuthorized) return res.status(400).json({ msg: StatusMessage.ALREADY_LOGGED_OUT });
+        
         return res
             .clearCookie('access_token')
-            .json({ sucess: true, message: 'Logout successful!' });
+            .json({ msg: 'Logout successful!' });
     }
 
     static protected(req, res) {
         // Check if user is logged in
-        const statusCheck = AuthController.isUserLogged(req);
-        if (!statusCheck.isLoggedIn)
-            return res
-                .status(401)
-                .json({ error: StatusMessage.ACCESS_NOT_AUTHORIZED });
+        const authStatus = checkAuthStatus(req);
+        if (!authStatus.isAuthorized) return res.status(401).json({ msg: StatusMessage.ACCESS_NOT_AUTHORIZED });
 
-        res.json({
-            id: statusCheck.user.id,
-            username: statusCheck.user.username,
-        });
+        res.json({ msg: {id: authStatus.user.id, username: authStatus.user.username} });
     }
 
-    static isUserLogged(req) {
-        const { user } = req.session;
-        if (user) return { isLoggedIn: true, user: user };
-        return { isLoggedIn: false };
+    static status(req, res) {
+        const authStatus = checkAuthStatus(req);
+        if (authStatus.isAuthorized) return res.status(200).json();
+        return res.status(401).json()
     }
 }

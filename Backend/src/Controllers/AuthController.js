@@ -109,7 +109,7 @@ export default class AuthController {
 
         return res
             .clearCookie('access_token')
-            .json({ msg: 'Logout successful!' });
+            .json({ msg: StatusMessage.LOGOUT_SUCCESS });
     }
 
     static protected(req, res) {

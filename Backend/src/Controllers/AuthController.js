@@ -150,6 +150,25 @@ export default class AuthController {
         }
     }
 
+    static async sendResetPasswordEmail(req, res) {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
+
+        const user = await userModel.getByReference({ email: email });
+        if (!user || user.length === 0) return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
+
+        
+
+    }
+
+    static async resetPassword(req, res) {
+        
+    }
+
+    static async changePassword(req, res) {
+
+    }
+
     static async #loginValidations(reqBody, res) {
         // Validate and clean input
         const validatedUser = validatePartialUser(reqBody);

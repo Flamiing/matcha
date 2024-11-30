@@ -16,13 +16,8 @@ export async function sendConfirmationEmail({
     username,
     first_name,
 }) {
-    const {
-        EMAIL_HOST,
-        EMAIL_PORT,
-        EMAIL_USER,
-        EMAIL_PASSWORD,
-        CONFIRM_ACCOUNT_LINK,
-    } = process.env;
+    const { CONFIRM_ACCOUNT_LINK } = process.env
+
     const confirmationToken = createConfirmationToken({
         id,
         email,
@@ -30,6 +25,21 @@ export async function sendConfirmationEmail({
         first_name,
     });
     const confirmationLink = `${CONFIRM_ACCOUNT_LINK}${confirmationToken}`;
+
+    const subject = '42 Matcha Confirmation Email';
+    const body = `Hello ${first_name},\n\nPlease click on the link below to confirm your account:\n\n${confirmationLink}`;
+
+    await sendEmail(email, subject, body);
+
+}
+
+async function sendEmail(email, subject, body) {
+    const {
+        EMAIL_HOST,
+        EMAIL_PORT,
+        EMAIL_USER,
+        EMAIL_PASSWORD,
+    } = process.env;
 
     const transporter = nodemailer.createTransport({
         host: EMAIL_HOST,
@@ -41,13 +51,11 @@ export async function sendConfirmationEmail({
         },
     });
 
-    const emailBody = `Hello ${first_name},\n\nPlease click on the link below to confirm your account:\n\n${confirmationLink}`;
-
     const mail = {
         from: EMAIL_USER,
         to: email,
-        subject: '42 Matcha Confirmation Email',
-        text: emailBody,
+        subject: subject,
+        text: body,
     };
 
     const info = await transporter.sendMail(mail);

@@ -47,17 +47,17 @@ const userSchema = z.object({
     first_name: z
         .string({
             invalid_type_error: 'Invalid first name.',
+            required_error: 'First name is required.',
         })
         .min(3, 'First name must be at least 3 characters long.')
-        .max(30, 'First name must be 30 characters or fewer.')
-        .optional(),
+        .max(30, 'First name must be 30 characters or fewer.'),
     last_name: z
         .string({
             invalid_type_error: 'Invalid last name.',
+            required_error: 'Last name is required.',
         })
         .min(3, 'Last name must be at least 3 characters long.')
-        .max(30, 'Last name must be 30 characters or fewer.')
-        .optional(),
+        .max(30, 'Last name must be 30 characters or fewer.'),
     password: z
         .string({
             required_error: 'Password is required.',

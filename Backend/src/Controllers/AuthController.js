@@ -7,7 +7,7 @@ import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
 import { createAccessToken } from '../Utils/jsonWebTokenUtils.js';
-import { checkAuthStatus } from '../Utils/authUtils.js';
+import { checkAuthStatus, sendConfirmationEmail } from '../Utils/authUtils.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -88,6 +88,8 @@ export default class AuthController {
                     .status(400)
                     .json({ error: StatusMessage.BAD_REQUEST });
             }
+
+            await sendConfirmationEmail(user);
 
             // Returns id
             const publicUser = getPublicUser(user);

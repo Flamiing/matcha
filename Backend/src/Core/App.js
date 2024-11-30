@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 // Middleware Imports:
 import { corsMiddleware } from '../Middlewares/corsMiddleware.js';
 import { sessionMiddleware } from '../Middlewares/sessionMiddleware.js';
+import { refreshTokenMiddleware } from '../Middlewares/refreshTokenMiddleware.js';
 
 // Router Imports:
 import AuthRouter from '../Routes/AuthRouter.js';
@@ -17,6 +18,11 @@ export default class App {
         this.PORT = process.env.BACKEND_PORT ?? 3001;
         this.API_VERSION = process.env.API_VERSION;
         this.API_PREFIX = `/api/v${this.API_VERSION}`;
+        this.IGNORED_ROUTES = [
+            `${this.API_PREFIX}/auth/login`,
+            `${this.API_PREFIX}/auth/register`,
+            `${this.API_PREFIX}/auth/status`,
+        ]
 
         this.#setupMiddleware();
         this.#setupRoutes();
@@ -34,6 +40,7 @@ export default class App {
         this.app.use(corsMiddleware());
         this.app.use(cookieParser());
         this.app.use(sessionMiddleware());
+        this.app.use(refreshTokenMiddleware(this.IGNORED_ROUTES));
     }
 
     #setupRoutes() {

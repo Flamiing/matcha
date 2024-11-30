@@ -116,8 +116,12 @@ export default class AuthController {
             const data = jwt.verify(confirmationToken, JWT_SECRET_KEY);
 
             const user = await userModel.getById(data);
-            if (!user || user.length === 0) return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
-            if (user.active_account) return res.status(400).json({ msg: StatusMessage.ACC_ALREADY_CONFIRMED });
+            if (!user || user.length === 0)
+                return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
+            if (user.active_account)
+                return res
+                    .status(400)
+                    .json({ msg: StatusMessage.ACC_ALREADY_CONFIRMED });
 
             const result = await userModel.update({
                 input: { active_account: true },

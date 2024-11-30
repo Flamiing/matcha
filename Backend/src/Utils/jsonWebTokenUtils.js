@@ -11,8 +11,8 @@ export function createAccessToken(user) {
     const { ACCESS_TOKEN_EXPIRY } = process.env;
     const data = {
         id: user.id,
-        username: user.username
-    }
+        username: user.username,
+    };
     const accessToken = createJWT(data, ACCESS_TOKEN_EXPIRY);
 
     return accessToken;
@@ -22,8 +22,8 @@ export function createRefreshToken(user) {
     const { REFRESH_TOKEN_EXPIRY } = process.env;
     const data = {
         id: user.id,
-        username: user.username
-    }
+        username: user.username,
+    };
     const refreshToken = createJWT(data, REFRESH_TOKEN_EXPIRY);
 
     return refreshToken;

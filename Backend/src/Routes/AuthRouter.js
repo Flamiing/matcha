@@ -12,7 +12,7 @@ export default class AuthRouter {
         router.get('/status', AuthController.status);
         router.get('/confirm', AuthController.confirm);
         router.get('/password/reset', AuthController.resetPassword);
-        
+
         // POST:
         router.post('/login', AuthController.login);
         router.post('/register', AuthController.register);

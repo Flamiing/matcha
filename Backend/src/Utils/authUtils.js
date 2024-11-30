@@ -16,7 +16,7 @@ export async function sendConfirmationEmail({
     username,
     first_name,
 }) {
-    const { CONFIRM_ACCOUNT_LINK } = process.env
+    const { CONFIRM_ACCOUNT_LINK } = process.env;
 
     const confirmationToken = createConfirmationToken({
         id,
@@ -30,16 +30,10 @@ export async function sendConfirmationEmail({
     const body = `Hello ${first_name},\n\nPlease click on the link below to confirm your account:\n\n${confirmationLink}`;
 
     await sendEmail(email, subject, body);
-
 }
 
 async function sendEmail(email, subject, body) {
-    const {
-        EMAIL_HOST,
-        EMAIL_PORT,
-        EMAIL_USER,
-        EMAIL_PASSWORD,
-    } = process.env;
+    const { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD } = process.env;
 
     const transporter = nodemailer.createTransport({
         host: EMAIL_HOST,

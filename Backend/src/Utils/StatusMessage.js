@@ -20,8 +20,10 @@ export default class StatusMessage {
         'The token to confirm the account expired. A new one has been sent to your email.';
     static ACC_SUCCESSFULLY_CONFIRMED =
         'Your account has been successfully confirmed!';
-    static REFRESH_TOKEN_EXPIRED = 'Refresh token is invalid or has expired. Please log in again.'
-    static REFRESH_TOKEN_REVOKED = 'Refresh token was revoked. Please log in again.'
-    static ACC_ALREADY_CONFIRMED = 'Account has already being confirmed.'
-    static INVALID_EMAIL = 'No account found with this email address.'
+    static REFRESH_TOKEN_EXPIRED =
+        'Refresh token is invalid or has expired. Please log in again.';
+    static REFRESH_TOKEN_REVOKED =
+        'Refresh token was revoked. Please log in again.';
+    static ACC_ALREADY_CONFIRMED = 'Account has already being confirmed.';
+    static INVALID_EMAIL = 'No account found with this email address.';
 }

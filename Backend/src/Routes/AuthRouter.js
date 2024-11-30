@@ -9,7 +9,6 @@ export default class AuthRouter {
         const router = Router();
 
         // GET:
-        router.get('/protected', AuthController.protected);
         router.get('/status', AuthController.status);
         router.get('/confirm', AuthController.confirm);
 

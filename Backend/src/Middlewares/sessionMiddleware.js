@@ -10,7 +10,7 @@ export const sessionMiddleware = () => (req, res, next) => {
         const data = jwt.verify(accessToken, JWT_SECRET_KEY);
         req.session.user = data;
     } catch (error) {
-        console.error('ERROR: ', error)
+        console.error('ERROR: ', error);
     }
 
     next(); // Go to the next route or middleware

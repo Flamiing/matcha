@@ -3,7 +3,6 @@ import nodemailer from 'nodemailer';
 
 // Local Imports:
 import { createConfirmationToken } from './jsonWebTokenUtils.js';
-import { parse } from 'dotenv';
 
 export function checkAuthStatus(req) {
     const { user } = req.session;

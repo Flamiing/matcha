@@ -1,5 +1,7 @@
+// Third-Party Imports:
 import { Router } from 'express';
 
+// Local Imports:
 import AuthController from '../Controllers/AuthController.js';
 
 export default class AuthRouter {
@@ -7,10 +9,13 @@ export default class AuthRouter {
         const router = Router();
 
         // GET:
+        router.get('/status', AuthController.status);
+        router.get('/confirm', AuthController.confirm);
 
         // POST:
-        //authRouter.post('/login');
-        //authRouter.post('/register');
+        router.post('/login', AuthController.login);
+        router.post('/register', AuthController.register);
+        router.post('/logout', AuthController.logout);
 
         return router;
     }

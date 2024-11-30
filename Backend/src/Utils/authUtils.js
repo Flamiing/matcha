@@ -11,16 +11,10 @@ export function checkAuthStatus(req) {
     return { isAuthorized: false };
 }
 
-export async function sendConfirmationEmail({ id, email, first_name }) {
-    const {
-        EMAIL_HOST,
-        EMAIL_PORT,
-        EMAIL_USER,
-        EMAIL_PASSWORD,
-        CONFIRM_ACCOUNT_LINK,
-    } = process.env;
-    const confirmationToken = createConfirmationToken({ id, email });
-    const confirmationLink = `${CONFIRM_ACCOUNT_LINK}${confirmationToken}`;
+export async function sendConfirmationEmail({ id, email, username, first_name }) {
+    const { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASSWORD, CONFIRM_ACCOUNT_LINK } = process.env;
+    const confirmationToken = createConfirmationToken({ id, email, username, first_name });
+    const confirmationLink = `${CONFIRM_ACCOUNT_LINK}${confirmationToken}`
 
     const transporter = nodemailer.createTransport({
         host: EMAIL_HOST,

@@ -65,7 +65,7 @@ export default class Model {
             .map((key, index) => `${key} = $${index + 1}`)
             .join(', ');
         const values = Object.values(input);
-        values.push(parseInt(id));
+        values.push(id);
 
         const query = {
             text: `UPDATE ${this.table} SET ${fields} WHERE id = $${values.length} RETURNING *;`,

@@ -14,6 +14,7 @@ export default class AuthRouter {
         });
         router.get('/protected', AuthController.protected);
         router.get('/status', AuthController.status);
+        router.get('/confirm', AuthController.confirm);
 
         // POST:
         router.post('/login', AuthController.login);

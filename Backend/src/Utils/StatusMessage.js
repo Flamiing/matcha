@@ -14,7 +14,10 @@ export default class StatusMessage {
     static ACCESS_NOT_AUTHORIZED = 'Access not authorized.';
     static USER_ALREADY_REGISTERED = 'Username or email already in use.';
     static LOGOUT_SUCCESS = 'Logout successful!';
-    static ACC_CONFIRMATION_REQUIRED = 'Please confirm your account before sign in. A confirmation link was sent to your email.'
-    static CONFIRM_ACC_TOKEN_EXPIRED = 'The token to confirm the account expired. A new one has been sent to your email.'
-    static ACC_SUCCESSFULLY_CONFIRMED = 'Your account has been successfully confirmed!'
+    static ACC_CONFIRMATION_REQUIRED =
+        'Please confirm your account before sign in. A confirmation link was sent to your email.';
+    static CONFIRM_ACC_TOKEN_EXPIRED =
+        'The token to confirm the account expired. A new one has been sent to your email.';
+    static ACC_SUCCESSFULLY_CONFIRMED =
+        'Your account has been successfully confirmed!';
 }

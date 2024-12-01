@@ -13,7 +13,12 @@ import {
     createRefreshToken,
     createResetPasswordToken,
 } from '../Utils/jsonWebTokenUtils.js';
-import { checkAuthStatus, sendConfirmationEmail, sendResetPasswordEmail, hashPassword } from '../Utils/authUtils.js';
+import {
+    checkAuthStatus,
+    sendConfirmationEmail,
+    sendResetPasswordEmail,
+    hashPassword,
+} from '../Utils/authUtils.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -115,9 +120,14 @@ export default class AuthController {
             const data = jwt.verify(confirmationToken, JWT_SECRET_KEY);
 
             const user = await userModel.getById(data);
-            if (!user) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            if (!user)
+                return res
+                    .status(500)
+                    .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
             if (user.length === 0)
-                return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+                return res
+                    .status(400)
+                    .json({ msg: StatusMessage.USER_NOT_FOUND });
             if (user.active_account)
                 return res
                     .status(400)
@@ -131,7 +141,10 @@ export default class AuthController {
                 return res
                     .status(500)
                     .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-            if (result.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+            if (result.length === 0)
+                return res
+                    .status(400)
+                    .json({ msg: StatusMessage.USER_NOT_FOUND });
 
             await AuthController.#createAuthTokens(res, data);
             if (!('set-cookie' in res.getHeaders())) return res;
@@ -157,17 +170,28 @@ export default class AuthController {
             return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
 
         const user = await userModel.getByReference({ email: email });
-        if (!user) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        if (user.length === 0) return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
+        if (!user)
+            return res
+                .status(500)
+                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (user.length === 0)
+            return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
         if (!user.active_account)
             return res
                 .status(403)
                 .json({ msg: StatusMessage.CONFIRM_ACC_FIRST });
 
         const resetPasswordToken = createResetPasswordToken(user);
-        const updatedUser = await userModel.update({ input: { reset_pass_token: resetPasswordToken }, id: user.id })
-        if (!updatedUser) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        if (updatedUser.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+        const updatedUser = await userModel.update({
+            input: { reset_pass_token: resetPasswordToken },
+            id: user.id,
+        });
+        if (!updatedUser)
+            return res
+                .status(500)
+                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (updatedUser.length === 0)
+            return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
         await sendResetPasswordEmail(updatedUser);
 
@@ -185,14 +209,18 @@ export default class AuthController {
             const errorMessage = validationResult.error.errors[0].message;
             return res.status(400).json({ msg: errorMessage });
         }
-        
+
         try {
             const data = jwt.verify(token, JWT_SECRET_KEY);
 
-            const result = AuthController.#updatePassword(res, data.id, validationResult.data.new_password);
+            const result = AuthController.#updatePassword(
+                res,
+                data.id,
+                validationResult.data.new_password
+            );
             if (!result) return res;
 
-            return res.json({ msg: StatusMessage.PASSWORD_UPDATED })
+            return res.json({ msg: StatusMessage.PASSWORD_UPDATED });
         } catch (error) {
             console.error('ERROR: ', error);
             if (error.name === 'TokenExpiredError') {
@@ -245,7 +273,8 @@ export default class AuthController {
             return res
                 .status(500)
                 .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        if (result.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+        if (result.length === 0)
+            return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
         return res
             .cookie('access_token', accessToken, {
@@ -266,18 +295,25 @@ export default class AuthController {
         if (oldPassword) {
             const user = await userModel.getById({ id });
             if (!user) {
-                res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+                res.status(500).json({
+                    msg: StatusMessage.INTERNAL_SERVER_ERROR,
+                });
                 return false;
             } else if (user.length === 0) {
                 res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
             }
 
             if (!user.active_account) {
-                res.status(403).json({ msg: StatusMessage.ACC_CONFIRMATION_REQUIRED });
+                res.status(403).json({
+                    msg: StatusMessage.ACC_CONFIRMATION_REQUIRED,
+                });
                 return false;
             }
 
-            const isValidPassword = await bcrypt.compare(newPassword, user.password);
+            const isValidPassword = await bcrypt.compare(
+                newPassword,
+                user.password
+            );
             if (!isValidPassword) {
                 res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
                 return false;
@@ -285,12 +321,16 @@ export default class AuthController {
         }
 
         const newPasswordHashed = await hashPassword(newPassword);
-        const updatedUser = await userModel.update({ input: { password: newPasswordHashed }, id: id });
+        const updatedUser = await userModel.update({
+            input: { password: newPasswordHashed },
+            id: id,
+        });
         if (!updatedUser)
             return res
                 .status(500)
                 .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        if (updatedUser.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+        if (updatedUser.length === 0)
+            return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
         return true;
     }

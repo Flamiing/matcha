@@ -30,7 +30,8 @@ export default class StatusMessage {
     static CONFIRM_ACC_FIRST =
         'Please confirm your account before trying to reset your password.';
     static RESET_PASS_TOKEN_EXPIRED = 'The reset password link has expired.';
-    static RESET_PASS_TOKEN_USED = 'This password reset link has already been used. Please request a new password reset if needed.';
+    static RESET_PASS_TOKEN_USED =
+        'This password reset link has already been used. Please request a new password reset if needed.';
     static INVALID_PASSWORD =
         'Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character (+.-_*$@!?%&).';
     static USER_NOT_FOUND = 'User not found.';

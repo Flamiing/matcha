@@ -220,8 +220,8 @@ export default class AuthController {
                 res: res,
                 token: token,
                 id: tokenData.id,
-                newPassword: validationResult.data.new_password
-            }
+                newPassword: validationResult.data.new_password,
+            };
 
             const result = await AuthController.#updatePassword(data);
             if (!result) return res;
@@ -253,8 +253,8 @@ export default class AuthController {
             res: res,
             id: req.session.user.id,
             newPassword: validationResult.data.new_password,
-            oldPassword: validationResult.data.old_password
-        }
+            oldPassword: validationResult.data.old_password,
+        };
 
         const result = await AuthController.#updatePassword(data);
         if (!result) return res;
@@ -322,7 +322,8 @@ export default class AuthController {
     static async #updatePassword(data) {
         const { id, newPassword } = data;
 
-        const validationResult = await AuthController.#passwordValidations(data);
+        const validationResult =
+            await AuthController.#passwordValidations(data);
         if (!validationResult) return false;
 
         const newPasswordHashed = await hashPassword(newPassword);
@@ -369,7 +370,9 @@ export default class AuthController {
                 id: id,
             });
             if (!result) {
-                res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+                res.status(500).json({
+                    msg: StatusMessage.INTERNAL_SERVER_ERROR,
+                });
                 return false;
             }
             if (result.length === 0) {

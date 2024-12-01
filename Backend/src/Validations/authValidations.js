@@ -2,7 +2,7 @@
 import bcrypt from 'bcryptjs';
 
 // Local Imports:
-import userModel from "../Models/UserModel.js";
+import userModel from '../Models/UserModel.js';
 import { validatePartialUser } from '../Schemas/userSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 
@@ -30,7 +30,7 @@ export async function passwordValidations(data) {
     // Check if the new password and old password are the same
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
-        console.log('HERE')
+        console.log('HERE');
         res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
         return false;
     }

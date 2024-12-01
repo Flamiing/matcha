@@ -21,7 +21,11 @@ import {
     sendResetPasswordEmail,
     hashPassword,
 } from '../Utils/authUtils.js';
-import { confirmAccountValidations, passwordValidations, loginValidations } from '../Validations/authValidations.js';
+import {
+    confirmAccountValidations,
+    passwordValidations,
+    loginValidations,
+} from '../Validations/authValidations.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -122,7 +126,10 @@ export default class AuthController {
             const tokenData = jwt.verify(confirmationToken, JWT_SECRET_KEY);
 
             // Validations
-            const validationResult = await confirmAccountValidations(res, tokenData);
+            const validationResult = await confirmAccountValidations(
+                res,
+                tokenData
+            );
             if (!validationResult) return res;
 
             const result = await userModel.update({
@@ -293,8 +300,7 @@ export default class AuthController {
     static async #updatePassword(data) {
         const { id, newPassword } = data;
 
-        const validationResult =
-            await passwordValidations(data);
+        const validationResult = await passwordValidations(data);
         if (!validationResult) return false;
 
         const newPasswordHashed = await hashPassword(newPassword);

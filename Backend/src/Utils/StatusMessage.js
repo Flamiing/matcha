@@ -34,4 +34,6 @@ export default class StatusMessage {
         'Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character (+.-_*$@!?%&).';
     static USER_NOT_FOUND = 'User not found.';
     static PASSWORD_UPDATED = 'Password updated successfully!';
+    static NOT_LOGGED_IN = 'You are not logged in.'
+    static SAME_PASSWORD = 'Your new password must be different from the current one.'
 }

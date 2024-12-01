@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 // Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
-import { validatePartialPasswords } from '../Schemas/changePasswordSchema.js';
+import { validatePasswords, validatePartialPasswords } from '../Schemas/changePasswordSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
 import {
@@ -213,7 +213,7 @@ export default class AuthController {
         try {
             const data = jwt.verify(token, JWT_SECRET_KEY);
 
-            const result = AuthController.#updatePassword(
+            const result = await AuthController.#updatePassword(
                 res,
                 data.id,
                 validationResult.data.new_password
@@ -232,7 +232,30 @@ export default class AuthController {
         }
     }
 
-    static async changePassword(req, res) {}
+    static async changePassword(req, res) {
+        const authStatus = checkAuthStatus(req);
+        if (!authStatus.isAuthorized)
+            return res
+                .status(401)
+                .json({ msg: StatusMessage.NOT_LOGGED_IN });
+        
+        const validationResult = validatePasswords(req.body);
+        if (!validationResult.success) {
+            const errorMessage = validationResult.error.errors[0].message;
+            return res.status(400).json({ msg: errorMessage });
+        }
+
+
+        const result = await AuthController.#updatePassword(
+            res,
+            req.session.user.id,
+            validationResult.data.new_password,
+            validationResult.data.old_password
+        );
+        if (!result) return res;
+
+        return res.json({ msg: StatusMessage.PASSWORD_UPDATED });
+    }
 
     static async #loginValidations(reqBody, res) {
         // Validate and clean input
@@ -301,6 +324,7 @@ export default class AuthController {
                 return false;
             } else if (user.length === 0) {
                 res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+                return false;
             }
 
             if (!user.active_account) {
@@ -311,11 +335,17 @@ export default class AuthController {
             }
 
             const isValidPassword = await bcrypt.compare(
-                newPassword,
+                oldPassword,
                 user.password
             );
             if (!isValidPassword) {
                 res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
+                return false;
+            }
+
+            const isSamePassword = await bcrypt.compare(newPassword, user.password);
+            if (isSamePassword) {
+                res.status(400).json({ msg: StatusMessage.SAME_PASSWORD })
                 return false;
             }
         }
@@ -325,12 +355,16 @@ export default class AuthController {
             input: { password: newPasswordHashed },
             id: id,
         });
-        if (!updatedUser)
-            return res
+        if (!updatedUser) {
+            res
                 .status(500)
                 .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        if (updatedUser.length === 0)
-            return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+            return false;
+        }
+        if (updatedUser.length === 0) {
+            res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+            return false;
+        }
 
         return true;
     }

@@ -315,43 +315,8 @@ export default class AuthController {
     }
 
     static async #updatePassword(res, id, newPassword, oldPassword = null) {
-        if (oldPassword) {
-            const user = await userModel.getById({ id });
-            if (!user) {
-                res.status(500).json({
-                    msg: StatusMessage.INTERNAL_SERVER_ERROR,
-                });
-                return false;
-            } else if (user.length === 0) {
-                res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-                return false;
-            }
-
-            if (!user.active_account) {
-                res.status(403).json({
-                    msg: StatusMessage.ACC_CONFIRMATION_REQUIRED,
-                });
-                return false;
-            }
-
-            const isValidPassword = await bcrypt.compare(
-                oldPassword,
-                user.password
-            );
-            if (!isValidPassword) {
-                res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
-                return false;
-            }
-
-            const isSamePassword = await bcrypt.compare(
-                newPassword,
-                user.password
-            );
-            if (isSamePassword) {
-                res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
-                return false;
-            }
-        }
+        const validationResult = await AuthController.#passwordValidations(res, id, newPassword, oldPassword);
+        if (!validationResult) return false;
 
         const newPasswordHashed = await hashPassword(newPassword);
         const updatedUser = await userModel.update({
@@ -367,6 +332,52 @@ export default class AuthController {
             return false;
         }
 
+        return true;
+    }
+
+    static async #passwordValidations(res, id, newPassword, oldPassword = null) {
+        // Get the user and check if the account is active
+        const user = await userModel.getById({ id });
+        if (!user) {
+            res.status(500).json({
+                msg: StatusMessage.INTERNAL_SERVER_ERROR,
+            });
+            return false;
+        } else if (user.length === 0) {
+            res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+            return false;
+        }
+
+        if (!user.active_account) {
+            res.status(403).json({
+                msg: StatusMessage.ACC_CONFIRMATION_REQUIRED,
+            });
+            return false;
+        }
+
+        // Check if the new password and old password are the same
+        const isSamePassword = await bcrypt.compare(
+            newPassword,
+            user.password
+        );
+        if (isSamePassword) {
+            res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
+            return false;
+        }
+
+        // Checks if old password is valid
+        if (oldPassword) {
+            const isValidPassword = await bcrypt.compare(
+                oldPassword,
+                user.password
+            );
+            if (!isValidPassword) {
+                res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
+                return false;
+            }
+        }
+
+        // If everything is valid, returns true
         return true;
     }
 }

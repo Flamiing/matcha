@@ -184,7 +184,7 @@ export default class AuthController {
         try {
             const data = jwt.verify(token, JWT_SECRET_KEY);
 
-
+            return res.json({ msg: 'done' })
         } catch (error) {
             console.error('ERROR: ', error);
             if (error.name === 'TokenExpiredError') {

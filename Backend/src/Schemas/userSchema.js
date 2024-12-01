@@ -1,6 +1,9 @@
 // Third-Party Imports:
 import z from 'zod';
 
+// Local Imports:
+import StatusMessage from '../Utils/StatusMessage.js';
+
 const disallowedUsernames = [
     'admin',
     'root',
@@ -66,7 +69,7 @@ const userSchema = z.object({
         .max(16, 'Password must be 16 characters or fewer.')
         .regex(
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*[+.\-_*$@!?%&])(?=.*\d)[A-Za-z\d+.\-_*$@!?%&]+$/,
-            { message: 'Invalid password.' }
+            { message: StatusMessage.INVALID_PASSWORD }
         ),
     age: z
         .number({ invalid_type_error: 'Invalid age.' })

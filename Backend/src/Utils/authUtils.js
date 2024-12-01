@@ -1,5 +1,6 @@
 // Third-Party Imports:
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcryptjs';
 
 // Local Imports:
 import { createConfirmationToken } from './jsonWebTokenUtils.js';
@@ -68,4 +69,10 @@ async function sendEmail(email, subject, body) {
 
     const info = await transporter.sendMail(mail);
     console.log('Email info: ', info);
+}
+
+export async function hashPassword(password) {
+    const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
+    const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    return encryptedPassword;
 }

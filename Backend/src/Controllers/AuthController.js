@@ -13,11 +13,7 @@ import {
     createRefreshToken,
     createResetPasswordToken,
 } from '../Utils/jsonWebTokenUtils.js';
-import {
-    checkAuthStatus,
-    sendConfirmationEmail,
-    sendResetPasswordEmail,
-} from '../Utils/authUtils.js';
+import { checkAuthStatus, sendConfirmationEmail, sendResetPasswordEmail, hashPassword } from '../Utils/authUtils.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -60,12 +56,9 @@ export default class AuthController {
         const { email, username, password } = validatedUser.data;
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
-            const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS);
             // Encrypt password
-            validatedUser.data.password = await bcrypt.hash(
-                password,
-                SALT_ROUNDS
-            );
+            validatedUser.data.password = await hashPassword(password);
+
             const user = await userModel.create({ input: validatedUser.data });
             if (user === null) {
                 return res
@@ -74,7 +67,7 @@ export default class AuthController {
             } else if (user.length === 0) {
                 return res
                     .status(400)
-                    .json({ error: StatusMessage.BAD_REQUEST });
+                    .json({ error: StatusMessage.USER_NOT_FOUND });
             }
 
             await sendConfirmationEmail(user);
@@ -122,8 +115,9 @@ export default class AuthController {
             const data = jwt.verify(confirmationToken, JWT_SECRET_KEY);
 
             const user = await userModel.getById(data);
-            if (!user || user.length === 0)
-                return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
+            if (!user) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            if (user.length === 0)
+                return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
             if (user.active_account)
                 return res
                     .status(400)
@@ -133,10 +127,11 @@ export default class AuthController {
                 input: { active_account: true },
                 id: data.id,
             });
-            if (!result || result.length === 0)
+            if (!result)
                 return res
                     .status(500)
                     .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            if (result.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
             await AuthController.#createAuthTokens(res, data);
             if (!('set-cookie' in res.getHeaders())) return res;
@@ -162,22 +157,17 @@ export default class AuthController {
             return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
 
         const user = await userModel.getByReference({ email: email });
-        if (!user || user.length === 0)
-            return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
+        if (!user) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (user.length === 0) return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
         if (!user.active_account)
             return res
                 .status(403)
                 .json({ msg: StatusMessage.CONFIRM_ACC_FIRST });
 
         const resetPasswordToken = createResetPasswordToken(user);
-        const updatedUser = await userModel.update({
-            input: { reset_pass_token: resetPasswordToken },
-            id: user.id,
-        });
-        if (!updatedUser || updatedUser.length === 0)
-            return res
-                .status(500)
-                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        const updatedUser = await userModel.update({ input: { reset_pass_token: resetPasswordToken }, id: user.id })
+        if (!updatedUser) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (updatedUser.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
         await sendResetPasswordEmail(updatedUser);
 
@@ -191,11 +181,18 @@ export default class AuthController {
             return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
 
         const validationResult = validatePartialPasswords(req.body);
-
+        if (!validationResult.success) {
+            const errorMessage = validationResult.error.errors[0].message;
+            return res.status(400).json({ msg: errorMessage });
+        }
+        
         try {
             const data = jwt.verify(token, JWT_SECRET_KEY);
 
-            return res.json({ msg: 'done' });
+            const result = AuthController.#updatePassword(res, data.id, validationResult.data.new_password);
+            if (!result) return res;
+
+            return res.json({ msg: StatusMessage.PASSWORD_UPDATED })
         } catch (error) {
             console.error('ERROR: ', error);
             if (error.name === 'TokenExpiredError') {
@@ -244,10 +241,11 @@ export default class AuthController {
             input: { refresh_token: refreshToken },
             id: data.id,
         });
-        if (!result || result.length === 0)
+        if (!result)
             return res
                 .status(500)
                 .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (result.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
 
         return res
             .cookie('access_token', accessToken, {
@@ -262,5 +260,38 @@ export default class AuthController {
                 sameSite: 'strict', // Cookie only accessible from the same domain
                 maxAge: parseInt(process.env.REFRESH_TOKEN_EXPIRY_COOKIE), // Cookie only valid for 30d
             });
+    }
+
+    static async #updatePassword(res, id, newPassword, oldPassword = null) {
+        if (oldPassword) {
+            const user = await userModel.getById({ id });
+            if (!user) {
+                res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+                return false;
+            } else if (user.length === 0) {
+                res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+            }
+
+            if (!user.active_account) {
+                res.status(403).json({ msg: StatusMessage.ACC_CONFIRMATION_REQUIRED });
+                return false;
+            }
+
+            const isValidPassword = await bcrypt.compare(newPassword, user.password);
+            if (!isValidPassword) {
+                res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
+                return false;
+            }
+        }
+
+        const newPasswordHashed = await hashPassword(newPassword);
+        const updatedUser = await userModel.update({ input: { password: newPasswordHashed }, id: id });
+        if (!updatedUser)
+            return res
+                .status(500)
+                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        if (updatedUser.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+
+        return true;
     }
 }

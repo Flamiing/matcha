@@ -1,6 +1,9 @@
 // Third-Party Imports:
 import z from 'zod';
 
+// Local Imports:
+import StatusMessage from '../Utils/StatusMessage.js';
+
 const changePasswordSchema = z.object({
     old_password: z.string({
         required_error: 'Old password is required.',
@@ -13,7 +16,7 @@ const changePasswordSchema = z.object({
         .max(16, 'New password must be 16 characters or fewer.')
         .regex(
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*[+.\-_*$@!?%&])(?=.*\d)[A-Za-z\d+.\-_*$@!?%&]+$/,
-            { message: 'Invalid password.' }
+            { message: StatusMessage.INVALID_PASSWORD }
         ),
 });
 

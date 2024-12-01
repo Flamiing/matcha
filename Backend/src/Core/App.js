@@ -45,7 +45,7 @@ export default class App {
         this.app.use(cookieParser());
         this.app.use(sessionMiddleware());
         this.app.use(refreshTokenMiddleware(this.IGNORED_ROUTES));
-        this.app.use(invalidJSONMiddleware())
+        this.app.use(invalidJSONMiddleware());
     }
 
     #setupRoutes() {

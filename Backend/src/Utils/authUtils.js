@@ -76,3 +76,8 @@ export async function hashPassword(password) {
     const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     return encryptedPassword;
 }
+
+export function returnErrorStatus(res, statusCode, errorMsg) {
+    res.status(statusCode).json({ msg: errorMsg });
+    return false;
+}

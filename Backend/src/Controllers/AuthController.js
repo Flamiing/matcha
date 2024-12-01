@@ -120,9 +120,9 @@ export default class AuthController {
         try {
             const { JWT_SECRET_KEY } = process.env;
             const confirmationToken = req.query.token;
-            const data = jwt.verify(confirmationToken, JWT_SECRET_KEY);
+            const tokenData = jwt.verify(confirmationToken, JWT_SECRET_KEY);
 
-            const user = await userModel.getById(data);
+            const user = await userModel.getById(tokenData);
             if (!user)
                 return res
                     .status(500)
@@ -138,7 +138,7 @@ export default class AuthController {
 
             const result = await userModel.update({
                 input: { active_account: true },
-                id: data.id,
+                id: tokenData.id,
             });
             if (!result)
                 return res
@@ -149,7 +149,7 @@ export default class AuthController {
                     .status(400)
                     .json({ msg: StatusMessage.USER_NOT_FOUND });
 
-            await AuthController.#createAuthTokens(res, data);
+            await AuthController.#createAuthTokens(res, tokenData);
             if (!('set-cookie' in res.getHeaders())) return res;
 
             return res.json({ msg: StatusMessage.ACC_SUCCESSFULLY_CONFIRMED });
@@ -158,7 +158,7 @@ export default class AuthController {
             if (error.name === 'TokenExpiredError') {
                 const confirmationToken = req.query.token;
                 const data = jwt.decode(confirmationToken);
-                await sendConfirmationEmail(data);
+                await sendConfirmationEmail(tokenData);
                 return res
                     .status(403)
                     .json({ msg: StatusMessage.CONFIRM_ACC_TOKEN_EXPIRED });
@@ -214,13 +214,16 @@ export default class AuthController {
         }
 
         try {
-            const data = jwt.verify(token, JWT_SECRET_KEY);
+            const tokenData = jwt.verify(token, JWT_SECRET_KEY);
 
-            const result = await AuthController.#updatePassword(
-                res,
-                data.id,
-                validationResult.data.new_password
-            );
+            const data = {
+                res: res,
+                token: token,
+                id: tokenData.id,
+                newPassword: validationResult.data.new_password
+            }
+
+            const result = await AuthController.#updatePassword(data);
             if (!result) return res;
 
             return res.json({ msg: StatusMessage.PASSWORD_UPDATED });
@@ -246,12 +249,14 @@ export default class AuthController {
             return res.status(400).json({ msg: errorMessage });
         }
 
-        const result = await AuthController.#updatePassword(
-            res,
-            req.session.user.id,
-            validationResult.data.new_password,
-            validationResult.data.old_password
-        );
+        const data = {
+            res: res,
+            id: req.session.user.id,
+            newPassword: validationResult.data.new_password,
+            oldPassword: validationResult.data.old_password
+        }
+
+        const result = await AuthController.#updatePassword(data);
         if (!result) return res;
 
         return res.json({ msg: StatusMessage.PASSWORD_UPDATED });
@@ -314,13 +319,10 @@ export default class AuthController {
             });
     }
 
-    static async #updatePassword(res, id, newPassword, oldPassword = null) {
-        const validationResult = await AuthController.#passwordValidations(
-            res,
-            id,
-            newPassword,
-            oldPassword
-        );
+    static async #updatePassword(data) {
+        const { id, newPassword } = data;
+
+        const validationResult = await AuthController.#passwordValidations(data);
         if (!validationResult) return false;
 
         const newPasswordHashed = await hashPassword(newPassword);
@@ -340,12 +342,8 @@ export default class AuthController {
         return true;
     }
 
-    static async #passwordValidations(
-        res,
-        id,
-        newPassword,
-        oldPassword = null
-    ) {
+    static async #passwordValidations(data) {
+        const { res, token, id, newPassword, oldPassword } = data;
         // Get the user and check if the account is active
         const user = await userModel.getById({ id });
         if (!user) {
@@ -362,6 +360,24 @@ export default class AuthController {
             res.status(403).json({
                 msg: StatusMessage.ACC_CONFIRMATION_REQUIRED,
             });
+            return false;
+        }
+
+        if (token && !oldPassword && user.reset_pass_token === token) {
+            const result = await userModel.update({
+                input: { reset_pass_token: null },
+                id: id,
+            });
+            if (!result) {
+                res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+                return false;
+            }
+            if (result.length === 0) {
+                res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+                return false;
+            }
+        } else if (!user.reset_pass_token && !oldPassword) {
+            res.status(400).json({ msg: StatusMessage.RESET_PASS_TOKEN_USED });
             return false;
         }
 

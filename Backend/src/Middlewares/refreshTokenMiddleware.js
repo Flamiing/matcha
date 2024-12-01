@@ -45,7 +45,10 @@ export const refreshTokenMiddleware =
 
             return next(); // Go to the next route or middleware
         } catch {
-            if (req.path.split("/").pop() === 'logout') return res.status(400).json({ msg: StatusMessage.NOT_LOGGED_IN });
+            if (req.path.split('/').pop() === 'logout')
+                return res
+                    .status(400)
+                    .json({ msg: StatusMessage.NOT_LOGGED_IN });
             return res
                 .status(401)
                 .clearCookie('refresh_token')

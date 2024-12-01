@@ -94,9 +94,7 @@ export default class AuthController {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
         if (!authStatus.isAuthorized)
-            return res
-                .status(400)
-                .json({ msg: StatusMessage.NOT_LOGGED_IN });
+            return res.status(400).json({ msg: StatusMessage.NOT_LOGGED_IN });
 
         return res
             .clearCookie('access_token')
@@ -160,8 +158,14 @@ export default class AuthController {
                 const tokenData = jwt.decode(confirmationToken);
 
                 const user = await userModel.findOne({ id: tokenData.id });
-                if (!user) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-                if (user.length === 0) return res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
+                if (!user)
+                    return res
+                        .status(500)
+                        .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+                if (user.length === 0)
+                    return res
+                        .status(400)
+                        .json({ msg: StatusMessage.USER_NOT_FOUND });
                 await sendConfirmationEmail(tokenData);
                 return res
                     .status(403)

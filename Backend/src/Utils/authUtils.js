@@ -24,12 +24,23 @@ export async function sendConfirmationEmail({
         username,
         first_name,
     });
-    const confirmationLink = `${CONFIRM_ACCOUNT_LINK}${confirmationToken}`;
 
+    const confirmationLink = `${CONFIRM_ACCOUNT_LINK}${confirmationToken}`;
     const subject = '42 Matcha Confirmation Email';
     const body = `Hello ${first_name},\n\nPlease click on the link below to confirm your account:\n\n${confirmationLink}`;
 
     await sendEmail(email, subject, body);
+}
+
+export async function sendResetPasswordEmail({ email, first_name, reset_pass_token }) {
+    const { RESET_PASSWORD_LINK } = process.env;
+
+    const resetPasswordLink = `${RESET_PASSWORD_LINK}${reset_pass_token}`
+    const subject = '42 Matcha Reset Password Email'
+    const body = `Hello ${first_name},\n\nPlease click on the link below to reset your password:\n\n${resetPasswordLink}`;
+
+    await sendEmail(email, subject, body);
+    
 }
 
 async function sendEmail(email, subject, body) {

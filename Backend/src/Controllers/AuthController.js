@@ -5,13 +5,15 @@ import jwt from 'jsonwebtoken';
 // Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
+import { validatePartialPasswords } from '../Schemas/changePasswordSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
 import {
     createAccessToken,
     createRefreshToken,
+    createResetPasswordToken,
 } from '../Utils/jsonWebTokenUtils.js';
-import { checkAuthStatus, sendConfirmationEmail } from '../Utils/authUtils.js';
+import { checkAuthStatus, sendConfirmationEmail, sendResetPasswordEmail } from '../Utils/authUtils.js';
 
 export default class AuthController {
     static async login(req, res) {
@@ -150,17 +152,50 @@ export default class AuthController {
         }
     }
 
-    static async sendResetPasswordEmail(req, res) {
+    static async sendResetPasswordLink(req, res) {
         const { email } = req.body;
         if (!email)
             return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
 
         const user = await userModel.getByReference({ email: email });
-        if (!user || user.length === 0)
-            return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
+        if (!user || user.length === 0) return res.status(400).json({ msg: StatusMessage.INVALID_EMAIL });
+        if (!user.active_account)
+            return res
+                .status(403)
+                .json({ msg: StatusMessage.CONFIRM_ACC_FIRST });
+
+        const resetPasswordToken = createResetPasswordToken(user);
+        const updatedUser = await userModel.update({ input: { reset_pass_token: resetPasswordToken }, id: user.id })
+        if (!updatedUser || updatedUser.length === 0) return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+
+        await sendResetPasswordEmail(updatedUser);
+
+        return res.json({ msg: StatusMessage.RESET_PASS_EMAIL_SENT })
+
     }
 
-    static async resetPassword(req, res) {}
+    static async resetPassword(req, res) {
+        const { JWT_SECRET_KEY } = process.env;
+        const { token } = req.query;
+        if (!token) return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
+
+        const validationResult = validatePartialPasswords(req.body);
+        
+        try {
+            const data = jwt.verify(token, JWT_SECRET_KEY);
+
+
+        } catch (error) {
+            console.error('ERROR: ', error);
+            if (error.name === 'TokenExpiredError') {
+                return res
+                    .status(403)
+                    .json({ msg: StatusMessage.RESET_PASS_TOKEN_EXPIRED });
+            }
+            return res.status(400).json({ msg: StatusMessage.BAD_REQUEST });
+        }
+
+    }
 
     static async changePassword(req, res) {}
 
@@ -175,15 +210,11 @@ export default class AuthController {
         // Checks if the user exists
         const { username, password } = validatedUser.data;
         const user = await userModel.findOne({ username });
-        if (user.length === 0) {
-            return res.status(401).json({ msg: StatusMessage.WRONG_USERNAME });
-        }
+        if (user.length === 0) return res.status(401).json({ msg: StatusMessage.WRONG_USERNAME });
 
         // Validates password
         const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
-        }
+        if (!isValidPassword) return res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
 
         if (!user.active_account)
             return res

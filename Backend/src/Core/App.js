@@ -23,6 +23,8 @@ export default class App {
             `${this.API_PREFIX}/auth/register`,
             `${this.API_PREFIX}/auth/status`,
             `${this.API_PREFIX}/auth/confirm`,
+            `${this.API_PREFIX}/auth/password/reset`,
+            `${this.API_PREFIX}/auth/password/change`,
         ];
 
         this.#setupMiddleware();

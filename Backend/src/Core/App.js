@@ -1,8 +1,15 @@
+// Third-Party Imports:
 import express, { json } from 'express';
-import { corsMiddleware } from '../Middlewares/Cors.js';
 import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 
-// Routers:
+// Middleware Imports:
+import { corsMiddleware } from '../Middlewares/corsMiddleware.js';
+import { sessionMiddleware } from '../Middlewares/sessionMiddleware.js';
+import { refreshTokenMiddleware } from '../Middlewares/refreshTokenMiddleware.js';
+import { invalidJSONMiddleware } from '../Middlewares/invalidJSONMiddleware.js';
+
+// Router Imports:
 import AuthRouter from '../Routes/AuthRouter.js';
 import UsersRouter from '../Routes/UsersRouter.js';
 
@@ -12,6 +19,14 @@ export default class App {
         this.PORT = process.env.BACKEND_PORT ?? 3001;
         this.API_VERSION = process.env.API_VERSION;
         this.API_PREFIX = `/api/v${this.API_VERSION}`;
+        this.IGNORED_ROUTES = [
+            `${this.API_PREFIX}/auth/login`,
+            `${this.API_PREFIX}/auth/register`,
+            `${this.API_PREFIX}/auth/status`,
+            `${this.API_PREFIX}/auth/confirm`,
+            `${this.API_PREFIX}/auth/password/reset`,
+            `${this.API_PREFIX}/auth/password/change`,
+        ];
 
         this.#setupMiddleware();
         this.#setupRoutes();
@@ -27,6 +42,10 @@ export default class App {
         this.app.disable('x-powered-by'); // Disable 'x-powered-by' header
         this.app.use(json());
         this.app.use(corsMiddleware());
+        this.app.use(cookieParser());
+        this.app.use(sessionMiddleware());
+        this.app.use(refreshTokenMiddleware(this.IGNORED_ROUTES));
+        this.app.use(invalidJSONMiddleware());
     }
 
     #setupRoutes() {

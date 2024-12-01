@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import { corsMiddleware } from '../Middlewares/corsMiddleware.js';
 import { sessionMiddleware } from '../Middlewares/sessionMiddleware.js';
 import { refreshTokenMiddleware } from '../Middlewares/refreshTokenMiddleware.js';
+import { invalidJSONMiddleware } from '../Middlewares/invalidJSONMiddleware.js';
 
 // Router Imports:
 import AuthRouter from '../Routes/AuthRouter.js';
@@ -44,6 +45,7 @@ export default class App {
         this.app.use(cookieParser());
         this.app.use(sessionMiddleware());
         this.app.use(refreshTokenMiddleware(this.IGNORED_ROUTES));
+        this.app.use(invalidJSONMiddleware())
     }
 
     #setupRoutes() {

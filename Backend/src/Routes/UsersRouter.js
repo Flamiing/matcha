@@ -1,5 +1,7 @@
+// Third-Party Imports:
 import { Router } from 'express';
 
+// Local Imports:
 import UsersController from '../Controllers/UsersController.js';
 
 export default class UsersRouter {
@@ -8,6 +10,7 @@ export default class UsersRouter {
 
         // GET:
         router.get('/', UsersController.getAllUsers);
+        router.get('/test', UsersController.testController);
         router.get('/:id', UsersController.getUserById);
 
         // POST:

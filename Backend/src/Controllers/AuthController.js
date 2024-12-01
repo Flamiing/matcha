@@ -5,7 +5,10 @@ import jwt from 'jsonwebtoken';
 // Local Imports:
 import userModel from '../Models/UserModel.js';
 import { validateUser, validatePartialUser } from '../Schemas/userSchema.js';
-import { validatePasswords, validatePartialPasswords } from '../Schemas/changePasswordSchema.js';
+import {
+    validatePasswords,
+    validatePartialPasswords,
+} from '../Schemas/changePasswordSchema.js';
 import StatusMessage from '../Utils/StatusMessage.js';
 import getPublicUser from '../Utils/getPublicUser.js';
 import {
@@ -235,16 +238,13 @@ export default class AuthController {
     static async changePassword(req, res) {
         const authStatus = checkAuthStatus(req);
         if (!authStatus.isAuthorized)
-            return res
-                .status(401)
-                .json({ msg: StatusMessage.NOT_LOGGED_IN });
-        
+            return res.status(401).json({ msg: StatusMessage.NOT_LOGGED_IN });
+
         const validationResult = validatePasswords(req.body);
         if (!validationResult.success) {
             const errorMessage = validationResult.error.errors[0].message;
             return res.status(400).json({ msg: errorMessage });
         }
-
 
         const result = await AuthController.#updatePassword(
             res,
@@ -343,9 +343,12 @@ export default class AuthController {
                 return false;
             }
 
-            const isSamePassword = await bcrypt.compare(newPassword, user.password);
+            const isSamePassword = await bcrypt.compare(
+                newPassword,
+                user.password
+            );
             if (isSamePassword) {
-                res.status(400).json({ msg: StatusMessage.SAME_PASSWORD })
+                res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
                 return false;
             }
         }
@@ -356,9 +359,7 @@ export default class AuthController {
             id: id,
         });
         if (!updatedUser) {
-            res
-                .status(500)
-                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
             return false;
         }
         if (updatedUser.length === 0) {

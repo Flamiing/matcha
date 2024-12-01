@@ -32,15 +32,18 @@ export async function sendConfirmationEmail({
     await sendEmail(email, subject, body);
 }
 
-export async function sendResetPasswordEmail({ email, first_name, reset_pass_token }) {
+export async function sendResetPasswordEmail({
+    email,
+    first_name,
+    reset_pass_token,
+}) {
     const { RESET_PASSWORD_LINK } = process.env;
 
-    const resetPasswordLink = `${RESET_PASSWORD_LINK}${reset_pass_token}`
-    const subject = '42 Matcha Reset Password Email'
+    const resetPasswordLink = `${RESET_PASSWORD_LINK}${reset_pass_token}`;
+    const subject = '42 Matcha Reset Password Email';
     const body = `Hello ${first_name},\n\nPlease click on the link below to reset your password:\n\n${resetPasswordLink}`;
 
     await sendEmail(email, subject, body);
-    
 }
 
 async function sendEmail(email, subject, body) {

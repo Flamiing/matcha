@@ -2,10 +2,9 @@
 import z from 'zod';
 
 const changePasswordSchema = z.object({
-    old_password: z
-        .string({
-            required_error: 'Old password is required.',
-        }),
+    old_password: z.string({
+        required_error: 'Old password is required.',
+    }),
     new_password: z
         .string({
             required_error: 'New password is required.',

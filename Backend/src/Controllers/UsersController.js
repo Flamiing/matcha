@@ -1,15 +1,17 @@
+// Local Imports:
 import userModel from '../Models/UserModel.js';
-import ErrorMessages from '../Utils/ErrorMessages.js';
+import StatusMessage from '../Utils/StatusMessage.js';
 
 export default class UsersController {
-    static testController(req, res) {
-        return res.json({ test: 'This is a test return' });
+    static async testController(req, res) {
+        const result = await userModel.getByReference(req.query);
+        return res.json({ result });
     }
 
     static async getAllUsers(req, res) {
         const users = await userModel.getAll();
         if (users) return res.json({ users: users });
-        return res.status(500).json({ error: ErrorMessages.QUERY_ERROR });
+        return res.status(500).json({ error: StatusMessage.QUERY_ERROR });
     }
 
     static async getUserById(req, res) {
@@ -20,10 +22,10 @@ export default class UsersController {
             if (user.length === 0)
                 return res
                     .status(404)
-                    .json({ error: ErrorMessages.NOT_FOUND_BY_ID });
+                    .json({ error: StatusMessage.NOT_FOUND_BY_ID });
             return res.json({ user: user });
         }
-        return res.status(500).json({ error: ErrorMessages.QUERY_ERROR });
+        return res.status(500).json({ error: StatusMessage.QUERY_ERROR });
     }
 
     static async createUser(req, res) {
@@ -73,10 +75,10 @@ export default class UsersController {
             if (user.length === 0)
                 return res
                     .status(404)
-                    .json({ error: ErrorMessages.NOT_FOUND_BY_ID }); // TODO: Change error msg
+                    .json({ error: StatusMessage.NOT_FOUND_BY_ID }); // TODO: Change error msg
             return res.json({ user: user });
         }
-        return res.status(500).json({ error: ErrorMessages.QUERY_ERROR });
+        return res.status(500).json({ error: StatusMessage.QUERY_ERROR });
     }
 
     static async updateUser(req, res) {
@@ -128,10 +130,10 @@ export default class UsersController {
             if (user.length === 0)
                 return res
                     .status(404)
-                    .json({ error: ErrorMessages.NOT_FOUND_BY_ID }); // TODO: Change error msg
+                    .json({ error: StatusMessage.NOT_FOUND_BY_ID }); // TODO: Change error msg
             return res.json({ user: user });
         }
-        return res.status(500).json({ error: ErrorMessages.QUERY_ERROR });
+        return res.status(500).json({ error: StatusMessage.QUERY_ERROR });
     }
 
     static async deleteUser(req, res) {
@@ -142,9 +144,9 @@ export default class UsersController {
             if (user === false)
                 return res
                     .status(404)
-                    .json({ error: ErrorMessages.NOT_FOUND_BY_ID });
+                    .json({ error: StatusMessage.NOT_FOUND_BY_ID });
             return res.json({ user: user });
         }
-        return res.status(500).json({ error: ErrorMessages.QUERY_ERROR });
+        return res.status(500).json({ error: StatusMessage.QUERY_ERROR });
     }
 }

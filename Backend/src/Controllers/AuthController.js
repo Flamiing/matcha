@@ -315,7 +315,12 @@ export default class AuthController {
     }
 
     static async #updatePassword(res, id, newPassword, oldPassword = null) {
-        const validationResult = await AuthController.#passwordValidations(res, id, newPassword, oldPassword);
+        const validationResult = await AuthController.#passwordValidations(
+            res,
+            id,
+            newPassword,
+            oldPassword
+        );
         if (!validationResult) return false;
 
         const newPasswordHashed = await hashPassword(newPassword);
@@ -335,7 +340,12 @@ export default class AuthController {
         return true;
     }
 
-    static async #passwordValidations(res, id, newPassword, oldPassword = null) {
+    static async #passwordValidations(
+        res,
+        id,
+        newPassword,
+        oldPassword = null
+    ) {
         // Get the user and check if the account is active
         const user = await userModel.getById({ id });
         if (!user) {
@@ -356,10 +366,7 @@ export default class AuthController {
         }
 
         // Check if the new password and old password are the same
-        const isSamePassword = await bcrypt.compare(
-            newPassword,
-            user.password
-        );
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
         if (isSamePassword) {
             res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
             return false;

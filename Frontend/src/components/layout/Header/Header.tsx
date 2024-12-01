@@ -65,7 +65,7 @@ const Header = () => {
 							<div className="flex items-center gap-1 text-sm">
 								<Link to="/login">
 									<button className="text-font-main btn whitespace-nowrap text-sm px-6 py-2 rounded-full hover:ease-in-out duration-300 hover:bg-secondary-light">
-										LogIn
+										Login
 									</button>
 								</Link>
 								<Link to="/register">
@@ -140,7 +140,7 @@ const Header = () => {
 								<div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
 									<Link to="/login" onClick={handleLinkClick}>
 										<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
-											LogIn
+											Login
 										</button>
 									</Link>
 									<Link

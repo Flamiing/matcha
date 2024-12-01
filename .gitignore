@@ -70,3 +70,6 @@ data
 
 # Ignore .vite folder from frontend
 .vite/
+
+# Ignore build folder for frontend
+dist/

@@ -18,6 +18,14 @@ const Header = () => {
 	const handleLinkClick = () => {
 		setIsMenuOpen(false);
 	};
+
+	const logout = () => {
+		// Clear tokens
+		sessionStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+		setUser(null);
+	};
+
 	return (
 		<header
 			className={`transition-all duration-300 z-30 ${

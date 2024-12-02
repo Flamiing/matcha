@@ -6,10 +6,15 @@ import authApi from "../../services/api/auth";
 const Form: React.FC = () => {
 	const [formData, setFormData] = useState({
 		username: "",
-		firstName: "",
-		lastName: "",
+		first_name: "",
+		last_name: "",
 		email: "",
 		password: "",
+		/* email: "testing@mail.com",
+		password: "Password1!",
+		username: "mag",
+		first_name: "alex",
+		last_name: "apa", */
 	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +28,15 @@ const Form: React.FC = () => {
 		e.preventDefault();
 		try {
 			await authApi.register(formData);
+			console.log("User registered");
+			setFormData({
+				username: "",
+				first_name: "",
+				last_name: "",
+				email: "",
+				password: "",
+			});
+			// TODO -> Mgs to confirm email
 		} catch (error) {
 			console.error(error);
 		}
@@ -41,15 +55,15 @@ const Form: React.FC = () => {
 				placeholder="Username*"
 			/>
 			<FormInput
-				name="firstName"
+				name="first_name"
 				onChange={handleChange}
-				value={formData.firstName}
+				value={formData.first_name}
 				placeholder="First Name*"
 			/>
 			<FormInput
-				name="lastName"
+				name="last_name"
 				onChange={handleChange}
-				value={formData.lastName}
+				value={formData.last_name}
 				placeholder="Last Name*"
 			/>
 			<FormInput

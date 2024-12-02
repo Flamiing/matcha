@@ -2,8 +2,8 @@ import apiRequest from "./config";
 
 interface RegisterData {
 	username: string;
-	firstName: string;
-	lastName: string;
+	first_name: string;
+	last_name: string;
 	email: string;
 	password: string;
 }

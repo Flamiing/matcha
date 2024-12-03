@@ -30,7 +30,6 @@ export async function passwordValidations(data) {
     // Check if the new password and old password are the same
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
-        console.log('HERE');
         res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
         return false;
     }

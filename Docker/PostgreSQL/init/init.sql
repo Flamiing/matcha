@@ -9,7 +9,7 @@ CREATE TABLE users (
 	username VARCHAR(50) UNIQUE NOT NULL,
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
-	password VARCHAR(255) NOT NULL,
+	password VARCHAR(255) DEFAULT NULL,
 	age INTEGER CHECK (age >= 0),
 	biography TEXT,
 	profile_picture UUID,

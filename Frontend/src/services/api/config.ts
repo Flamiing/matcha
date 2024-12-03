@@ -13,11 +13,17 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 
 	const resp = await fetch(`${API_BASE_URL}/${endpoint}`, finalOptions);
 
+	const data = await resp.json();
+
 	if (!resp.ok) {
-		throw new Error(resp.statusText);
+		throw {
+			status: resp.status,
+			message:
+				data.msg || "An unexpected error occurred",
+		};
 	}
 
-	return resp.json();
+	return data;
 }
 
 export default apiRequest;

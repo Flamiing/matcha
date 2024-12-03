@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import FormInput from "../../components/common/FormInput";
 import authApi from "../../services/api/auth";
-import MsgCard from "../../components/common/MsgCard/MsgCardWrapper";
+import MsgCard from "../../components/common/MsgCard/MsgCard";
 
 const Form: React.FC = () => {
 	const [formData, setFormData] = useState({
@@ -12,9 +12,11 @@ const Form: React.FC = () => {
 		email: "",
 		password: "",
 	});
+
 	const [msg, setMsg] = useState<{
 		type: "error" | "success";
-		text: string;
+		message: string;
+		key: number; // Add a key to force re-render
 	} | null>(null);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,6 @@ const Form: React.FC = () => {
 		e.preventDefault();
 		try {
 			await authApi.register(formData);
-			console.log("User registered");
 			setFormData({
 				username: "",
 				first_name: "",
@@ -38,24 +39,31 @@ const Form: React.FC = () => {
 			});
 			setMsg({
 				type: "success",
-				text: "User registered successfully. Please confirm your email.",
+				message:
+					"User registered successfully. Please confirm your email.",
+				key: Date.now(), // Use timestamp as key
 			});
-		} catch (error) {
-			let errorMessage = "Registration failed. Please try again.";
-			if (error instanceof Response) {
-				const errorData = await error.json();
-				errorMessage = errorData.msg || errorMessage;
-			}
+		} catch (error: any) {
+			const errorMessage = error.message;
+
 			setMsg({
 				type: "error",
-				text: errorMessage,
+				message: errorMessage,
+				key: Date.now(),
 			});
 		}
 	};
 
 	return (
 		<>
-			{msg && <MsgCard type={msg.type} msg={msg.text} />}
+			{msg && (
+				<MsgCard
+					key={msg.key}
+					type={msg.type}
+					message={msg.message}
+					onClose={() => setMsg(null)}
+				/>
+			)}
 			<form
 				onSubmit={submitForm}
 				className="bg-white shadow-md flex flex-col gap-8 p-10 rounded max-w-3xl items-center"

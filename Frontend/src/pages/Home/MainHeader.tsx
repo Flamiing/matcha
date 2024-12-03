@@ -8,7 +8,7 @@ const MainHeader: React.FC = () => {
 				{/* <video autoPlay loop muted playsInline className="max-w-24">
 					<source src="" type="video/mp4" />
 				</video> */}
-				<img src="/favicon.ico" alt="" className="max-w-24" />
+				<img src="/logo.png" alt="" className="max-w-40" />
 				<h1 className="lg:text-5xl text-2xl text-gray-8">
 					Welcome to Matcha!
 				</h1>

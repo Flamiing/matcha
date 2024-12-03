@@ -18,8 +18,7 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 	if (!resp.ok) {
 		throw {
 			status: resp.status,
-			message:
-				data.msg || "An unexpected error occurred",
+			message: data.msg || "An unexpected error occurred",
 		};
 	}
 

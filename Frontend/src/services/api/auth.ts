@@ -19,10 +19,10 @@ export const authApi = {
 	},
 
 	// Log in a user
-	login: async (email: string, password: string) => {
+	login: async (username: string, password: string) => {
 		return apiRequest("auth/login", {
 			method: "POST",
-			body: JSON.stringify({ email, password }),
+			body: JSON.stringify({ username, password }),
 		});
 	},
 

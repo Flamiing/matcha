@@ -45,7 +45,6 @@ const Form: React.FC = () => {
 			});
 		} catch (error: any) {
 			const errorMessage = error.message;
-
 			setMsg({
 				type: "error",
 				message: errorMessage,

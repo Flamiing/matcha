@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import FormInput from "../../components/common/FormInput";
-import MsgCard from "../../components/common/MsgCard/MsgCard";
+import MsgCard from "../../components/common/MsgCard";
 import authApi from "../../services/api/auth";
 
 const Form: React.FC = () => {

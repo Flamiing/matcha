@@ -229,6 +229,7 @@ export default class AuthController {
             return res
                 .status(403)
                 .json({ msg: StatusMessage.CONFIRM_ACC_FIRST });
+        if (user.oauth) return res.status(403).json({ msg: StatusMessage.CANNOT_CHANGE_PASS })
 
         const resetPasswordToken = createResetPasswordToken(user);
         const updatedUser = await userModel.update({
@@ -288,6 +289,7 @@ export default class AuthController {
         const authStatus = checkAuthStatus(req);
         if (!authStatus.isAuthorized)
             return res.status(401).json({ msg: StatusMessage.NOT_LOGGED_IN });
+        if (authStatus.user.oauth) return res.status(403).json({ msg: StatusMessage.CANNOT_CHANGE_PASS })
 
         const validationResult = validatePasswords(req.body);
         if (!validationResult.success) {

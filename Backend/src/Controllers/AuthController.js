@@ -50,6 +50,27 @@ export default class AuthController {
         return res.json({ msg: publicUser });
     }
 
+    static async loginOAuth(res, validatedUser) {
+        const user = await userModel.getByReference({ username: validatedUser.data.username })
+        if (!user) {
+            res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            return true;
+        }
+        if (user.length === 0)
+            return false;
+
+        if (user.oauth) {
+            await AuthController.#createAuthTokens(res, user);
+            if (!('set-cookie' in res.getHeaders())) return res;
+            const publicUser = getPublicUser(user);
+            console.log('USER LOGGED!')
+            res.json({ msg: publicUser });
+            return true;
+        }
+        
+        return false;
+    }
+
     static async register(req, res) {
         // Check if user is logged in
         const authStatus = checkAuthStatus(req);
@@ -68,8 +89,7 @@ export default class AuthController {
         return await AuthController.#registerUser(res, validatedUser);
     }
 
-    static async handleGoogleOAuth(req, res) {
-        // TODO: Handle OAuth Login
+    static async handleOAuth(req, res) {
         const authStatus = checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
@@ -104,9 +124,12 @@ export default class AuthController {
             }
 
             const validatedUser = validatePartialUser(data);
+            validatedUser.data.active_account = true;
+            validatedUser.data.oauth = true;
             return await AuthController.#registerUser(res, validatedUser, true);
         } catch (error) {
-            console.error('ERROR: ', error);
+            console.error('ERROR: ', error.response.data.error_description ?? error);
+            if (error.response.status === 401) return res.status(401).json({ msg: error.response.data.error_description })
             return res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
         }
     }
@@ -339,6 +362,7 @@ export default class AuthController {
 
     static async #registerUser(res, validatedUser, oauth=false) {
         const { email, username, password } = validatedUser.data;
+        if (oauth && await AuthController.loginOAuth(res, validatedUser)) return res;
         const isUnique = await userModel.isUnique({ email, username });
         if (isUnique) {
             // Encrypt password
@@ -357,10 +381,10 @@ export default class AuthController {
 
             if (!oauth) await sendConfirmationEmail(user);
 
-            /* if (oauth) {
+            if (oauth) {
                 await AuthController.#createAuthTokens(res, user);
                 if (!('set-cookie' in res.getHeaders())) return res;
-            } */
+            }
 
             // Returns public user info:
             const publicUser = getPublicUser(user);

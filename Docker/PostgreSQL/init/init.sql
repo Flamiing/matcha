@@ -18,6 +18,7 @@ CREATE TABLE users (
 	last_online TIMESTAMP,
 	is_online BOOLEAN DEFAULT FALSE,
 	active_account BOOLEAN DEFAULT FALSE,
+	oauth BOOLEAN DEFAULT FALSE,
     refresh_token VARCHAR(2048) DEFAULT NULL,
     reset_pass_token VARCHAR(2048) DEFAULT NULL,
 	gender gender_enum,

@@ -350,14 +350,8 @@ export default class AuthController {
             input: { password: newPasswordHashed },
             id: id,
         });
-        if (!updatedUser) {
-            res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-            return false;
-        }
-        if (updatedUser.length === 0) {
-            res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-            return false;
-        }
+        if (!updatedUser) return returnErrorStatus(res, 500, StatusMessage.INTERNAL_SERVER_ERROR)
+        if (updatedUser.length === 0) return returnErrorStatus(res, 400, StatusMessage.USER_NOT_FOUND)
 
         return true;
     }

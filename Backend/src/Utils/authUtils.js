@@ -82,4 +82,3 @@ export function returnErrorStatus(res, statusCode, errorMsg) {
     res.status(statusCode).json({ msg: errorMsg });
     return false;
 }
-

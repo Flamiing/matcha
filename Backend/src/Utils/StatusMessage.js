@@ -39,5 +39,6 @@ export default class StatusMessage {
     static SAME_PASSWORD =
         'Your new password must be different from the current one.';
     static INVALID_JSON = 'Invalid JSON payload.';
-    static CANNOT_CHANGE_PASS = 'Your account is linked to 42 School. Please manage your password on their site.'
+    static CANNOT_CHANGE_PASS =
+        'Your account is linked to 42 School. Please manage your password on their site.';
 }

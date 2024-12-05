@@ -12,7 +12,7 @@ export function createAccessToken(user) {
     const data = {
         id: user.id,
         username: user.username,
-        oauth: user.oauth ?? false
+        oauth: user.oauth ?? false,
     };
     const accessToken = createJWT(data, ACCESS_TOKEN_EXPIRY);
 
@@ -24,7 +24,7 @@ export function createRefreshToken(user) {
     const data = {
         id: user.id,
         username: user.username,
-        oauth: user.oauth ?? false
+        oauth: user.oauth ?? false,
     };
     const refreshToken = createJWT(data, REFRESH_TOKEN_EXPIRY);
 

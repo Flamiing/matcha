@@ -1,6 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { authApi, User, LoginData } from "../api/auth";
 
-const AuthContext = createContext(null);
+interface AuthContextType {
+	isAuthenticated: boolean | null;
+	user: User | null;
+	login: (credentials: LoginData) => Promise<boolean>;
+	logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * AuthProvider component

@@ -19,18 +19,22 @@ interface FaceProps {
 
 const Face: React.FC<FaceProps> = ({ user }) => {
 	return (
-		<section className="container max-w-4xl text-center my-20 px-3 flex justify-center">
+		<section className="container max-w-4xl text-center px-3 flex justify-center">
 			<div className="flex flex-row justify-center gap-3 border-y border-black w-fit py-5">
 				<div className="relative w-0 h-0">
-					<p className="absolute left-10 -top-4 -z-10 opacity-50 text-7xl">🔥</p>
+					<p className="absolute left-10 -top-4 opacity-50 text-7xl">
+						🔥
+					</p>
 				</div>
-				<div className="w-32">
-					<p className="z-10 text-xl font-bold font-mono">{user.fame}</p>
+				<div className="w-32 z-10">
+					<p className="z-10 text-xl font-bold font-mono">
+						{user.fame}
+					</p>
 					<p className="font-bold">Fame</p>
 				</div>
 				<div className="w-[2px] bg-black"></div>
 				<div className="w-32 flex items-center justify-center">
-					{(timeAgo(user.last_online) === 'Currently online') ?
+					{timeAgo(user.last_online) === "Currently online" ? (
 						<div className="ml-3 flex items-center justify-center">
 							<div className="relative w-0 h-0">
 								<div className="absolute right-1 -top-1 w-2 h-2 bg-green-500 rounded-full"></div>
@@ -39,12 +43,11 @@ const Face: React.FC<FaceProps> = ({ user }) => {
 								{timeAgo(user.last_online)}
 							</p>
 						</div>
-						:
+					) : (
 						<p className="font-light">
 							{timeAgo(user.last_online)}
 						</p>
-					}
-
+					)}
 				</div>
 			</div>
 		</section>

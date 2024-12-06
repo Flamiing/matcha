@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import FormInput from "../../components/common/FormInput";
+import OauthButton from "../../components/common/Oauth42";
 import authApi from "../../services/api/auth";
 import MsgCard from "../../components/common/MsgCard";
 
@@ -67,7 +69,8 @@ const Form: React.FC = () => {
 				onSubmit={submitForm}
 				className="bg-white shadow-md flex flex-col gap-8 p-10 rounded max-w-3xl items-center"
 			>
-				<p>Create your account to start meeting people</p>
+				<OauthButton action="Register" />
+				<p>Or create your account and start meeting people</p>
 				<FormInput
 					name="username"
 					onChange={handleChange}
@@ -103,6 +106,17 @@ const Form: React.FC = () => {
 				<button className="w-fit duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-5 py-3">
 					Create Account
 				</button>
+				<dir className="w-full text-start p-0">
+					<p>
+						Already have an account?{" "}
+						<Link
+							to="/login"
+							className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+						>
+							Login
+						</Link>
+					</p>
+				</dir>
 			</form>
 		</>
 	);

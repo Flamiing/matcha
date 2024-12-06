@@ -137,7 +137,7 @@ const Header = () => {
 										</button>
 									</Link>
 								</div>
-								<div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
+								{!isLogedIn() && <div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
 									<Link to="/login" onClick={handleLinkClick}>
 										<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
 											Login
@@ -151,7 +151,7 @@ const Header = () => {
 											Register
 										</button>
 									</Link>
-								</div>
+								</div>}
 							</nav>
 						</div>
 					)}

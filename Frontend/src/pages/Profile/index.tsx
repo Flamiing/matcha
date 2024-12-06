@@ -2,6 +2,7 @@ import { useState } from "react";
 import Face from "./Face";
 import Body from "./Body";
 import Info from "./Info";
+import Images from "./Images";
 
 interface UserData {
 	username: string;
@@ -34,11 +35,12 @@ const index = () => {
 
 	return (
 		<main className="flex flex-1 justify-center items-center flex-col">
-			<div>
+			<div className="w-full bg-secondary flex flex-col items-center gap-12">
 				<Face user={userData} />
 				<Body user={userData} />
-				<Info user={userData} />
+				<Images user={userData} />
 			</div>
+			<Info user={userData} />
 		</main>
 	);
 };

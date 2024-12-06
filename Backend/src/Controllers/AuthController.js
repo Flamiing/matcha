@@ -160,7 +160,8 @@ export default class AuthController {
 
     static async status(req, res) {
         const authStatus = await checkAuthStatus(req);
-        if (authStatus.isAuthorized) return res.status(200).json({ msg: authStatus.user });
+        if (authStatus.isAuthorized)
+            return res.status(200).json({ msg: authStatus.user });
         return res.status(401).json();
     }
 

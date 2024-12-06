@@ -10,7 +10,8 @@ export async function checkAuthStatus(req) {
     const { user } = req.session;
     if (user) {
         const userExist = await userModel.findOne({ id: user.id });
-        if (userExist && userExist.length !== 0) return { isAuthorized: true, user: user };
+        if (userExist && userExist.length !== 0)
+            return { isAuthorized: true, user: user };
     }
     return { isAuthorized: false };
 }

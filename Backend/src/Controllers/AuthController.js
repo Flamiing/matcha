@@ -109,7 +109,7 @@ export default class AuthController {
                     client_id: OAUTH_CLIENT_ID,
                     client_secret: OAUTH_SECRET_KEY,
                     code: code,
-                    redirect_uri: 'http://localhost:3000/auth/oauth2/callback',
+                    redirect_uri: process.env.CALLBACK_ROUTE,
                 }
             );
 

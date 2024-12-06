@@ -31,7 +31,7 @@ import {
 export default class AuthController {
     static async login(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -74,7 +74,7 @@ export default class AuthController {
 
     static async register(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -91,7 +91,7 @@ export default class AuthController {
     }
 
     static async handleOAuth(req, res) {
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -146,9 +146,9 @@ export default class AuthController {
         }
     }
 
-    static logout(req, res) {
+    static async logout(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (!authStatus.isAuthorized)
             return res.status(400).json({ msg: StatusMessage.NOT_LOGGED_IN });
 
@@ -158,16 +158,15 @@ export default class AuthController {
             .json({ msg: StatusMessage.LOGOUT_SUCCESS });
     }
 
-    static status(req, res) {
-        const authStatus = checkAuthStatus(req);
-        if (authStatus.isAuthorized)
-            return res.status(200).json({ msg: authStatus.user });
+    static async status(req, res) {
+        const authStatus = await checkAuthStatus(req);
+        if (authStatus.isAuthorized) return res.status(200).json({ msg: authStatus.user });
         return res.status(401).json();
     }
 
     static async confirm(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -302,7 +301,7 @@ export default class AuthController {
     }
 
     static async changePassword(req, res) {
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (!authStatus.isAuthorized)
             return res.status(401).json({ msg: StatusMessage.NOT_LOGGED_IN });
         if (authStatus.user.oauth)

@@ -4,10 +4,14 @@ import bcrypt from 'bcryptjs';
 
 // Local Imports:
 import { createConfirmationToken } from './jsonWebTokenUtils.js';
+import userModel from '../Models/UserModel.js';
 
-export function checkAuthStatus(req) {
+export async function checkAuthStatus(req) {
     const { user } = req.session;
-    if (user) return { isAuthorized: true, user: user };
+    if (user) {
+        const userExist = await userModel.findOne({ id: user.id });
+        if (userExist && userExist.length !== 0) return { isAuthorized: true, user: user };
+    }
     return { isAuthorized: false };
 }
 

@@ -21,6 +21,7 @@ export default class AuthRouter {
         router.post('/register', AuthController.register);
         router.post('/logout', AuthController.logout);
         router.post('/password/change', AuthController.changePassword);
+        router.post('/oauth', AuthController.handleOAuth);
 
         return router;
     }

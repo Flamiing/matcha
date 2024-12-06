@@ -10,30 +10,22 @@ export async function passwordValidations(data) {
     const { res, token, id, newPassword, oldPassword } = data;
     // Get the user and check if the account is active
     const user = await userModel.getById({ id });
-    if (!user) {
-        res.status(500).json({
-            msg: StatusMessage.INTERNAL_SERVER_ERROR,
-        });
-        return false;
-    } else if (user.length === 0) {
-        res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-        return false;
-    }
+    if (!user)
+        return returnErrorStatus(res, 500, StatusMessage.INTERNAL_SERVER_ERROR);
+    else if (user.length === 0)
+        returnErrorStatus(res, 400, StatusMessage.USER_NOT_FOUND);
 
-    if (!user.active_account) {
-        res.status(403).json({
-            msg: StatusMessage.ACC_CONFIRMATION_REQUIRED,
-        });
-        return false;
-    }
+    if (!user.active_account)
+        return returnErrorStatus(
+            res,
+            403,
+            StatusMessage.ACC_CONFIRMATION_REQUIRED
+        );
 
     // Check if the new password and old password are the same
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
-    if (isSamePassword) {
-        console.log('HERE');
-        res.status(400).json({ msg: StatusMessage.SAME_PASSWORD });
-        return false;
-    }
+    if (isSamePassword)
+        return returnErrorStatus(res, 400, StatusMessage.SAME_PASSWORD);
 
     // Checks if old password is valid
     if (oldPassword) {
@@ -41,10 +33,8 @@ export async function passwordValidations(data) {
             oldPassword,
             user.password
         );
-        if (!isValidPassword) {
-            res.status(401).json({ msg: StatusMessage.WRONG_PASSWORD });
-            return false;
-        }
+        if (!isValidPassword)
+            return returnErrorStatus(res, 401, StatusMessage.WRONG_PASSWORD);
     }
 
     if (token && !oldPassword && user.reset_pass_token === token) {
@@ -52,20 +42,16 @@ export async function passwordValidations(data) {
             input: { reset_pass_token: null },
             id: id,
         });
-        if (!result) {
-            res.status(500).json({
-                msg: StatusMessage.INTERNAL_SERVER_ERROR,
-            });
-            return false;
-        }
-        if (result.length === 0) {
-            res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-            return false;
-        }
-    } else if (!user.reset_pass_token && !oldPassword) {
-        res.status(400).json({ msg: StatusMessage.RESET_PASS_TOKEN_USED });
-        return false;
-    }
+        if (!result)
+            return returnErrorStatus(
+                res,
+                500,
+                StatusMessage.INTERNAL_SERVER_ERROR
+            );
+        if (result.length === 0)
+            return returnErrorStatus(res, 400, StatusMessage.USER_NOT_FOUND);
+    } else if (!user.reset_pass_token && !oldPassword)
+        return returnErrorStatus(res, 400, StatusMessage.RESET_PASS_TOKEN_USED);
 
     // If everything is valid, returns true
     return true;
@@ -101,18 +87,12 @@ export async function loginValidations(reqBody, res) {
 
 export async function confirmAccountValidations(res, tokenData) {
     const user = await userModel.getById(tokenData);
-    if (!user) {
-        res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-        return false;
-    }
-    if (user.length === 0) {
-        res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-        return false;
-    }
-    if (user.active_account) {
-        res.status(400).json({ msg: StatusMessage.ACC_ALREADY_CONFIRMED });
-        return false;
-    }
+    if (!user)
+        return returnErrorStatus(res, 500, StatusMessage.INTERNAL_SERVER_ERROR);
+    if (user.length === 0)
+        return returnErrorStatus(res, 400, StatusMessage.USER_NOT_FOUND);
+    if (user.active_account)
+        return returnErrorStatus(res, 400, StatusMessage.ACC_ALREADY_CONFIRMED);
 
     return true;
 }

@@ -1,12 +1,12 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/common/FormInput";
 import MsgCard from "../../components/common/MsgCard";
 import OauthButton from "../../components/common/Oauth42";
-import authApi from "../../services/api/auth";
+import { useAuth } from "../../context/AuthContext";
 
-const Form: React.FC = () => {
+const LoginForm: React.FC = () => {
+	const { login } = useAuth();
 	const [formData, setFormData] = useState({
 		username: "",
 		password: "",
@@ -27,21 +27,19 @@ const Form: React.FC = () => {
 
 	const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		try {
-			await authApi.login(formData.username, formData.password);
+		const response = await login(formData);
+
+		if (response.success) {
 			setFormData({
 				username: "",
 				password: "",
 			});
-			window.location.href = "/profile";
-		} catch (error: any) {
-			const errorMessage = error.message;
-			setMsg({
-				type: "error",
-				message: errorMessage,
-				key: Date.now(),
-			});
 		}
+		setMsg({
+			type: response.success ? "success" : "error",
+			message: response.message,
+			key: Date.now(),
+		});
 	};
 
 	return (
@@ -59,7 +57,7 @@ const Form: React.FC = () => {
 				className="bg-white shadow-md flex flex-col gap-8 p-10 rounded max-w-3xl items-center"
 			>
 				<OauthButton action="Login" />
-				<p>Or enter you credentials to access your account</p>
+				<p>Or enter your credentials to access your account</p>
 				<FormInput
 					name="username"
 					onChange={handleChange}
@@ -76,7 +74,7 @@ const Form: React.FC = () => {
 				<button className="w-fit duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-5 py-3">
 					Access Account
 				</button>
-				<dir className="w-full text-start p-0">
+				<div className="w-full text-start p-0">
 					<p>
 						Don't have an account yet?{" "}
 						<Link
@@ -86,10 +84,10 @@ const Form: React.FC = () => {
 							Create account
 						</Link>
 					</p>
-				</dir>
+				</div>
 			</form>
 		</>
 	);
 };
 
-export default Form;
+export default LoginForm;

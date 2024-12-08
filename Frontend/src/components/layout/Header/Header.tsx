@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
+import { useAuth } from "../../../context/AuthContext";
 
-const Header = () => {
+const Header: React.FC = () => {
+	const { isAuthenticated, logout } = useAuth();
+	const navigate = useNavigate();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const { isMobile, isTablet, isDesktop } = useBreakpoints();
 
@@ -19,11 +22,11 @@ const Header = () => {
 		setIsMenuOpen(false);
 	};
 
-	const logout = () => {
-		// Clear tokens
-		sessionStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
-		setUser(null);
+	const handleLogout = async () => {
+		const response = await logout();
+		if (response.success) {
+			navigate("/");
+		}
 	};
 
 	return (
@@ -137,21 +140,36 @@ const Header = () => {
 										</button>
 									</Link>
 								</div>
-								{!isLogedIn() && <div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
-									<Link to="/login" onClick={handleLinkClick}>
-										<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
-											Login
-										</button>
-									</Link>
-									<Link
-										to="/register"
-										onClick={handleLinkClick}
-									>
-										<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
-											Register
-										</button>
-									</Link>
-								</div>}
+								{(!isAuthenticated && (
+									<div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
+										<Link
+											to="/login"
+											onClick={handleLinkClick}
+										>
+											<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
+												Login
+											</button>
+										</Link>
+										<Link
+											to="/register"
+											onClick={handleLinkClick}
+										>
+											<button className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic">
+												Register
+											</button>
+										</Link>
+									</div>
+								)) ||
+									(isAuthenticated && (
+										<div className="border-t border-white mt-4 pt-4 px-6 flex items-center justify-start">
+											<button
+												onClick={handleLogout}
+												className="rounded-full px-3 py-2 text-white hover:ease-in-out duration-300 hover:bg-primary-monochromatic"
+											>
+												Logout
+											</button>
+										</div>
+									))}
 							</nav>
 						</div>
 					)}

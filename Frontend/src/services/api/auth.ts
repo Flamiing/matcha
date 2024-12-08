@@ -8,6 +8,11 @@ interface RegisterData {
 	password: string;
 }
 
+interface LoginData {
+	username: string;
+	password: string;
+}
+
 interface User {
 	id: string;
 	email: string;
@@ -24,40 +29,87 @@ interface User {
 	gender: string | null;
 	sexual_preference: string | null;
 }
-export type { User };
+
+interface AuthResponse {
+	success: boolean;
+	message: string;
+	user?: User;
+}
+
+export type { User, RegisterData, LoginData, AuthResponse };
 
 // Authentication service methods
 export const authApi = {
 	// Register a new user
-	register: async (userData: RegisterData) => {
-		return apiRequest("auth/register", {
-			method: "POST",
-			body: JSON.stringify(userData),
-		});
+	register: async (userData: RegisterData): Promise<AuthResponse> => {
+		try {
+			const response = await apiRequest("auth/register", {
+				method: "POST",
+				body: JSON.stringify(userData),
+			});
+			return response;
+		} catch (error: any) {
+			return {
+				success: false,
+				message: error.message || "Registration failed",
+			};
+		}
 	},
 
 	// Log in a user
-	login: async (username: string, password: string) => {
-		return apiRequest("auth/login", {
-			method: "POST",
-			body: JSON.stringify({ username, password }),
-		});
+	login: async (userData: LoginData): Promise<AuthResponse> => {
+		try {
+			const response = await apiRequest("auth/login", {
+				method: "POST",
+				body: JSON.stringify(userData),
+			});
+			return response;
+		} catch (error: any) {
+			return {
+				success: false,
+				message: error.message || "Login failed",
+			};
+		}
 	},
 
 	// Log out a user
-	logout: async () => {
-		return apiRequest("auth/logout", { method: "POST" });
+	logout: async (): Promise<AuthResponse> => {
+		try {
+			await apiRequest("auth/logout", { method: "POST" });
+			return {
+				success: true,
+				message: "Logout successful",
+			};
+		} catch (error: any) {
+			return {
+				success: false,
+				message: error.message || "Logout failed",
+			};
+		}
 	},
 
 	// Check if user is authenticated
-	checkAuth: async () => {
+	checkAuth: async (): Promise<boolean> => {
 		try {
 			const response = await apiRequest("auth/status");
-			if (response.ok) return true;
+			return response.status === 200;
 		} catch {
 			return false;
 		}
-		return false;
+	},
+
+	oauth: async (code: string): Promise<AuthResponse> => {
+		try {
+			const response = await apiRequest(
+				`auth/oauth?code=${code}`
+			);
+			return response;
+		} catch (error: any) {
+			return {
+				success: false,
+				message: error.message || "OAuth failed",
+			};
+		}
 	},
 };
 

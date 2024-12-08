@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import Face from "./Face";
 import Body from "./Body";
 import Info from "./Info";
@@ -18,8 +19,10 @@ interface UserData {
 }
 
 const index = () => {
+	const { user } = useAuth();
+
 	const [userData, setUserData] = useState<UserData>({
-		username: "SupperDupper",
+		username: user.username,
 		email: "testing@telefonica.com",
 		first_name: "Dennis",
 		second_name: "Bateman",

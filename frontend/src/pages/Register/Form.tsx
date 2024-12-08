@@ -30,8 +30,8 @@ const Form: React.FC = () => {
 
 	const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		try {
-			await authApi.register(formData);
+		const { success, message } = await authApi.register(formData);
+		if (success) {
 			setFormData({
 				username: "",
 				first_name: "",
@@ -39,20 +39,12 @@ const Form: React.FC = () => {
 				email: "",
 				password: "",
 			});
-			setMsg({
-				type: "success",
-				message:
-					"User registered successfully. Please confirm your email.",
-				key: Date.now(), // Use timestamp as key
-			});
-		} catch (error: any) {
-			const errorMessage = error.message;
-			setMsg({
-				type: "error",
-				message: errorMessage,
-				key: Date.now(),
-			});
 		}
+		setMsg({
+			type: success ? "success" : "error",
+			message,
+			key: Date.now(),
+		});
 	};
 
 	return (

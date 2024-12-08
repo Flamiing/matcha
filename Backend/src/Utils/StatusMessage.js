@@ -11,7 +11,7 @@ export default class StatusMessage {
         'The username you entered does not exist. Please try again.';
     static ALREADY_LOGGED_IN = 'Already logged in.';
     static ACCESS_NOT_AUTHORIZED = 'Access not authorized.';
-    static USER_ALREADY_REGISTERED = 'Username or email already in use.';
+    static DUPLICATE_USERNAME_OR_EMAIL = 'Username or email already in use.';
     static LOGOUT_SUCCESS = 'Logout successful!';
     static ACC_CONFIRMATION_REQUIRED =
         'Please confirm your account before sign in. A confirmation link was sent to your email.';
@@ -39,4 +39,6 @@ export default class StatusMessage {
     static SAME_PASSWORD =
         'Your new password must be different from the current one.';
     static INVALID_JSON = 'Invalid JSON payload.';
+    static CANNOT_CHANGE_PASS =
+        'Your account is linked to 42 School. Please manage your password on their site.';
 }

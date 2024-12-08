@@ -1,9 +1,10 @@
 // Third-Party Imports:
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 // Local Imports:
 import userModel from '../Models/UserModel.js';
-import { validateUser } from '../Schemas/userSchema.js';
+import { validatePartialUser, validateUser } from '../Schemas/userSchema.js';
 import {
     validatePasswords,
     validatePartialPasswords,
@@ -30,7 +31,7 @@ import {
 export default class AuthController {
     static async login(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -49,9 +50,31 @@ export default class AuthController {
         return res.json({ msg: publicUser });
     }
 
+    static async loginOAuth(res, validatedUser) {
+        const user = await userModel.getByReference({
+            username: validatedUser.data.username,
+        });
+        if (!user) {
+            res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+            return true;
+        }
+        if (user.length === 0) return false;
+
+        if (user.oauth) {
+            await AuthController.#createAuthTokens(res, user);
+            if (!('set-cookie' in res.getHeaders())) return res;
+            const publicUser = getPublicUser(user);
+            console.log('USER LOGGED!');
+            res.json({ msg: publicUser });
+            return true;
+        }
+
+        return false;
+    }
+
     static async register(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -64,39 +87,68 @@ export default class AuthController {
             return res.status(400).json({ msg: errorMessage });
         }
 
-        // Check for duplicated user
-        const { email, username, password } = validatedUser.data;
-        const isUnique = await userModel.isUnique({ email, username });
-        if (isUnique) {
-            // Encrypt password
-            validatedUser.data.password = await hashPassword(password);
-
-            const user = await userModel.create({ input: validatedUser.data });
-            if (user === null) {
-                return res
-                    .status(500)
-                    .json({ error: StatusMessage.INTERNAL_SERVER_ERROR });
-            } else if (user.length === 0) {
-                return res
-                    .status(400)
-                    .json({ error: StatusMessage.USER_NOT_FOUND });
-            }
-
-            await sendConfirmationEmail(user);
-
-            // Returns id
-            const publicUser = getPublicUser(user);
-            return res.status(201).json({ msg: publicUser });
-        }
-
-        return res
-            .status(400)
-            .json({ msg: StatusMessage.USER_ALREADY_REGISTERED });
+        return await AuthController.#registerUser(res, validatedUser);
     }
 
-    static logout(req, res) {
+    static async handleOAuth(req, res) {
+        const authStatus = await checkAuthStatus(req);
+        if (authStatus.isAuthorized)
+            return res
+                .status(400)
+                .json({ msg: StatusMessage.ALREADY_LOGGED_IN });
+
+        const { code } = req.body;
+
+        const { OAUTH_CLIENT_ID, OAUTH_SECRET_KEY } = process.env;
+
+        try {
+            const tokenResponse = await axios.post(
+                'https://api.intra.42.fr/oauth/token',
+                {
+                    grant_type: 'authorization_code',
+                    client_id: OAUTH_CLIENT_ID,
+                    client_secret: OAUTH_SECRET_KEY,
+                    code: code,
+                    redirect_uri: process.env.CALLBACK_ROUTE,
+                }
+            );
+
+            const accessTokenOAuth = tokenResponse.data.access_token;
+            const userOAuth = await axios.get('https://api.intra.42.fr/v2/me', {
+                headers: {
+                    Authorization: `Bearer ${accessTokenOAuth}`,
+                },
+            });
+
+            const data = {
+                email: userOAuth.data.email,
+                username: userOAuth.data.login,
+                first_name: userOAuth.data.first_name,
+                last_name: userOAuth.data.last_name,
+            };
+
+            const validatedUser = validatePartialUser(data);
+            validatedUser.data.active_account = true;
+            validatedUser.data.oauth = true;
+            return await AuthController.#registerUser(res, validatedUser, true);
+        } catch (error) {
+            console.error(
+                'ERROR: ',
+                error.response.data.error_description ?? error
+            );
+            if (error.response.status === 401)
+                return res
+                    .status(401)
+                    .json({ msg: error.response.data.error_description });
+            return res
+                .status(500)
+                .json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
+        }
+    }
+
+    static async logout(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (!authStatus.isAuthorized)
             return res.status(400).json({ msg: StatusMessage.NOT_LOGGED_IN });
 
@@ -106,15 +158,16 @@ export default class AuthController {
             .json({ msg: StatusMessage.LOGOUT_SUCCESS });
     }
 
-    static status(req, res) {
-        const authStatus = checkAuthStatus(req);
-        if (authStatus.isAuthorized) return res.status(200).json();
+    static async status(req, res) {
+        const authStatus = await checkAuthStatus(req);
+        if (authStatus.isAuthorized)
+            return res.status(200).json({ msg: authStatus.user });
         return res.status(401).json();
     }
 
     static async confirm(req, res) {
         // Check if user is logged in
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (authStatus.isAuthorized)
             return res
                 .status(400)
@@ -189,6 +242,10 @@ export default class AuthController {
             return res
                 .status(403)
                 .json({ msg: StatusMessage.CONFIRM_ACC_FIRST });
+        if (user.oauth)
+            return res
+                .status(403)
+                .json({ msg: StatusMessage.CANNOT_CHANGE_PASS });
 
         const resetPasswordToken = createResetPasswordToken(user);
         const updatedUser = await userModel.update({
@@ -245,9 +302,13 @@ export default class AuthController {
     }
 
     static async changePassword(req, res) {
-        const authStatus = checkAuthStatus(req);
+        const authStatus = await checkAuthStatus(req);
         if (!authStatus.isAuthorized)
             return res.status(401).json({ msg: StatusMessage.NOT_LOGGED_IN });
+        if (authStatus.user.oauth)
+            return res
+                .status(403)
+                .json({ msg: StatusMessage.CANNOT_CHANGE_PASS });
 
         const validationResult = validatePasswords(req.body);
         if (!validationResult.success) {
@@ -308,15 +369,53 @@ export default class AuthController {
             input: { password: newPasswordHashed },
             id: id,
         });
-        if (!updatedUser) {
-            res.status(500).json({ msg: StatusMessage.INTERNAL_SERVER_ERROR });
-            return false;
-        }
-        if (updatedUser.length === 0) {
-            res.status(400).json({ msg: StatusMessage.USER_NOT_FOUND });
-            return false;
-        }
+        if (!updatedUser)
+            return returnErrorStatus(
+                res,
+                500,
+                StatusMessage.INTERNAL_SERVER_ERROR
+            );
+        if (updatedUser.length === 0)
+            return returnErrorStatus(res, 400, StatusMessage.USER_NOT_FOUND);
 
         return true;
+    }
+
+    static async #registerUser(res, validatedUser, oauth = false) {
+        const { email, username, password } = validatedUser.data;
+        if (oauth && (await AuthController.loginOAuth(res, validatedUser)))
+            return res;
+        const isUnique = await userModel.isUnique({ email, username });
+        if (isUnique) {
+            // Encrypt password
+            if (!oauth)
+                validatedUser.data.password = await hashPassword(password);
+
+            const user = await userModel.create({ input: validatedUser.data });
+            if (user === null) {
+                return res
+                    .status(500)
+                    .json({ error: StatusMessage.INTERNAL_SERVER_ERROR });
+            } else if (user.length === 0) {
+                return res
+                    .status(400)
+                    .json({ error: StatusMessage.USER_NOT_FOUND });
+            }
+
+            if (!oauth) await sendConfirmationEmail(user);
+
+            if (oauth) {
+                await AuthController.#createAuthTokens(res, user);
+                if (!('set-cookie' in res.getHeaders())) return res;
+            }
+
+            // Returns public user info:
+            const publicUser = getPublicUser(user);
+            return res.status(201).json({ msg: publicUser });
+        }
+
+        return res
+            .status(400)
+            .json({ msg: StatusMessage.DUPLICATE_USERNAME_OR_EMAIL });
     }
 }

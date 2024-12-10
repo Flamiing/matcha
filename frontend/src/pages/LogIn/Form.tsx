@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/common/FormInput";
 import MsgCard from "../../components/common/MsgCard";
-import OauthButton from "../../components/common/Oauth42";
+import OauthButton from "../../components/common/Oauth42Button";
 import { useAuth } from "../../context/AuthContext";
 
 const LoginForm: React.FC = () => {

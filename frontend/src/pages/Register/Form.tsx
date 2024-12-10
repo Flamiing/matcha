@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "../../components/common/FormInput";
-import OauthButton from "../../components/common/Oauth42";
+import OauthButton from "../../components/common/Oauth42Button";
 import authApi from "../../services/api/auth";
 import MsgCard from "../../components/common/MsgCard";
 

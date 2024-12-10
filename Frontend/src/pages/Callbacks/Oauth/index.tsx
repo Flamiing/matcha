@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import authApi from "../../services/api/auth";
+import { useAuth } from "../../../context/AuthContext";
+import authApi from "../../../services/api/auth";
 
 const index: React.FC = () => {
 	const { isAuthenticated, loading } = useAuth();
@@ -33,6 +33,7 @@ const index: React.FC = () => {
 	return (
 		<main className="m-auto ">
 			<h1 className={`text-xl font-bold ${error}`}>{pageMsg}</h1>
+			{/* TODO: use button component for more consistent UI */}
 			{error != "" && (
 				<button
 					className="btn bg-primary text-white m-auto"

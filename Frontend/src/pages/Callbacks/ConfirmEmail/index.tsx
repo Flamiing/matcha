@@ -7,7 +7,9 @@ const index: React.FC = () => {
 
 	return (
 		<main>
-			<section className="container max-w-4xl text-center px-3 flex justify-center"></section>
+			<section className="container max-w-4xl text-center px-3 flex justify-center">
+				
+			</section>
 		</main>
 	);
 };

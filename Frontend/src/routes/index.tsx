@@ -6,7 +6,8 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
-import Oauth from "../pages/Oauth";
+import Oauth from "../pages/Callbacks/Oauth";
+import ConfirmEmail from "../pages/Callbacks/ConfirmEmail";
 
 const protectedRoutes = {
 	profile: {
@@ -36,6 +37,10 @@ const publicRoutes = {
 	oauth: {
 		path: "auth/oauth/callback",
 		element: <Oauth />,
+	},
+	confirmEmail: {
+		path: "auth/email/callback",
+		element: <ConfirmEmail />,
 	},
 	// 404 default route if not found
 	notFound: {

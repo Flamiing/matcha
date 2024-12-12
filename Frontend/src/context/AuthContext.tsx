@@ -48,7 +48,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 				/* const userData = await authApi.getCurrentUser();
 				setUser(userData); */
 				const resp = await authApi.checkAuth();
-				console.log("AHHHHHHHH: ", resp);
 				setIsAuthenticated(resp);
 				if (resp) {
 					// Temporary mock user data

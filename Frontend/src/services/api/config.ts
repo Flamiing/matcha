@@ -11,17 +11,7 @@ export async function apiRequest(endpoint: string, options: RequestInit = {}) {
 		},
 	};
 
-	console.log("Request Headers:", finalOptions.headers);
-	console.log("Request Credentials:", finalOptions.credentials);
-
 	const resp = await fetch(`${API_BASE_URL}/${endpoint}`, finalOptions);
-
-	// Add this log to see what response you're getting
-	console.log("Response Status:", resp.status);
-	console.log(
-		"Response Headers:",
-		Object.fromEntries(resp.headers.entries())
-	);
 
 	const data = await resp.json();
 

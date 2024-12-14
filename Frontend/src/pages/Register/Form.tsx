@@ -5,6 +5,7 @@ import FormInput from "../../components/common/FormInput";
 import OauthButton from "../../components/common/Oauth42Button";
 import authApi from "../../services/api/auth";
 import MsgCard from "../../components/common/MsgCard";
+import RegularButton from "../../components/common/RegularButton";
 
 const Form: React.FC = () => {
 	const [formData, setFormData] = useState({
@@ -95,9 +96,7 @@ const Form: React.FC = () => {
 					type="password"
 					placeholder="Password*"
 				/>
-				<button className="w-fit duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-5 py-3">
-					Create Account
-				</button>
+				<RegularButton value="Create Account" />
 				<dir className="w-full text-start p-0">
 					<p>
 						Already have an account?{" "}

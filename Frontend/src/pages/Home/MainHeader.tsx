@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import StyledButton from "../../components/common/StyledButton";
 
 const MainHeader: React.FC = () => {
 	return (
@@ -16,12 +17,7 @@ const MainHeader: React.FC = () => {
 					Because, love too can be industrialized. ❤️
 				</p>
 				<Link to="/login">
-					<button
-						className="duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-14 py-5"
-						title="Start here"
-					>
-						Start here
-					</button>
+					<StyledButton value="Start Here"></StyledButton>
 				</Link>
 			</div>
 		</section>

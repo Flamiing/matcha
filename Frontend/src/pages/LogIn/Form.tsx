@@ -4,6 +4,7 @@ import FormInput from "../../components/common/FormInput";
 import MsgCard from "../../components/common/MsgCard";
 import OauthButton from "../../components/common/Oauth42Button";
 import { useAuth } from "../../context/AuthContext";
+import RegularButton from "../../components/common/RegularButton";
 
 const LoginForm: React.FC = () => {
 	const { login } = useAuth();
@@ -71,9 +72,7 @@ const LoginForm: React.FC = () => {
 					type="password"
 					placeholder="Password*"
 				/>
-				<button className="w-fit duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-5 py-3">
-					Access Account
-				</button>
+				<RegularButton value="Access Account" />
 				<div className="w-full text-start p-0">
 					<p>
 						Don't have an account yet?{" "}

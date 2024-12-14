@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import authApi from "../../../services/api/auth";
+import RegularButton from "../../../components/common/RegularButton";
 
-const index: React.FC = () => {
+const Index: React.FC = () => {
 	const { isAuthenticated, loading } = useAuth();
 	const [pageMsg, setPageMsg] = useState<string>(
 		"Authenticating you... hold on..."
@@ -24,6 +25,9 @@ const index: React.FC = () => {
 					setPageMsg(message);
 					setError("text-red-400");
 				}
+			} else {
+				setPageMsg("No code provided. Try to login again.");
+				setError("text-red-400");
 			}
 		};
 
@@ -31,21 +35,20 @@ const index: React.FC = () => {
 	}, []);
 
 	return (
-		<main className="m-auto ">
+		<main className="m-auto">
 			<h1 className={`text-xl font-bold ${error}`}>{pageMsg}</h1>
-			{/* TODO: use button component for more consistent UI */}
-			{error != "" && (
-				<button
-					className="btn bg-primary text-white m-auto"
-					onClick={() => {
-						window.location.href = "/login";
-					}}
-				>
-					Login
-				</button>
+			{error !== "" && (
+				<div className="mx-auto w-fit mt-7">
+					<RegularButton
+						callback={() => {
+							window.location.href = "/login";
+						}}
+						value="Back to login from"
+					/>
+				</div>
 			)}
 		</main>
 	);
 };
 
-export default index;
+export default Index;

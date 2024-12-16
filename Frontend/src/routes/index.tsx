@@ -8,18 +8,23 @@ import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Oauth from "../pages/Callbacks/Oauth";
 import ConfirmEmail from "../pages/Callbacks/ConfirmEmail";
+import Browse from "../pages/Browse";
 
 const protectedRoutes = {
 	profile: {
 		path: "profile",
 		element: (
-			<ProtectedRoute>
-				<Profile />
-			</ProtectedRoute>
+			<Profile />
 		),
 	},
+	browse: {
+		path: "browse",
+		element: (
+			<Browse />
+		)
+	}
 };
-
+ƒ
 const publicRoutes = {
 	home: {
 		index: true,
@@ -33,7 +38,9 @@ const publicRoutes = {
 		path: "register",
 		element: <Register />,
 	},
-	// confirm oauth callback
+};
+
+const callbackRoutes = {
 	oauth: {
 		path: "auth/oauth/callback",
 		element: <Oauth />,
@@ -42,7 +49,10 @@ const publicRoutes = {
 		path: "auth/email/callback",
 		element: <ConfirmEmail />,
 	},
-	// 404 default route if not found
+}
+
+// 404 default route if not found
+const defaultRoute = {
 	notFound: {
 		path: "*",
 		element: <NotFound />,
@@ -56,6 +66,8 @@ export const router = createBrowserRouter([
 		children: [
 			...Object.values(publicRoutes),
 			...Object.values(protectedRoutes),
+			...Object.values(callbackRoutes),
+			...Object.values(defaultRoute),
 		],
 	},
 ]);
@@ -63,4 +75,6 @@ export const router = createBrowserRouter([
 export const routes = {
 	...publicRoutes,
 	...protectedRoutes,
+	...callbackRoutes,
+	...defaultRoute,
 };

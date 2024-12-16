@@ -16,23 +16,32 @@ interface InfoProps {
 }
 
 const Info: React.FC<InfoProps> = ({ user }) => {
+	const preferenceDisplay =
+		user.sexual_preference === "Bisexual"
+			? "Male & Female"
+			: user.sexual_preference;
+
 	return (
-		<section className="container max-w-4xl text-center my-20 px-3">
-			<div className="flex flex-col items-center gap-7">
-				<div className="flex gap-2 justify-center items-center">
-					<p className="font-semibold text-lg tracking-wide underline">
-						{user.gender}
-					</p>
-					<p className="font-light">looking for</p>
-					<p className="font-semibold text-lg tracking-wide underline">
-						{/* Added check to replace 'Bisexual' with more readable text */}
-						{user.sexual_preference === "Bisexual"
-							? "Male & Female"
-							: user.sexual_preference}
-					</p>
+		<section className="container max-w-4xl mx-auto pt-12 px-4">
+			<div className="flex flex-col items-center space-y-8">
+				<div className="bg-gray-50 rounded-lg px-6 py-3 shadow-sm">
+					<div className="flex items-center gap-3 text-lg">
+						<span className="font-medium text-gray-900">
+							{user.gender}
+						</span>
+						<span className="text-gray-500 text-base">
+							looking for
+						</span>
+						<span className="font-medium text-gray-900">
+							{preferenceDisplay}
+						</span>
+					</div>
 				</div>
-				<div className="container max-w-2xl text-pretty tracking-wide">
-					{user.biography}
+
+				<div className="prose prose-gray max-w-2xl">
+					<p className="text-gray-700 leading-relaxed text-pretty">
+						{user.biography}
+					</p>
 				</div>
 			</div>
 		</section>

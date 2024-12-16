@@ -24,7 +24,7 @@ const protectedRoutes = {
 		)
 	}
 };
-ƒ
+
 const publicRoutes = {
 	home: {
 		index: true,

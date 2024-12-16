@@ -10,11 +10,11 @@ const index = () => {
 	return (
 		<main className="flex flex-1 justify-center items-center flex-col">
 			<MainHeader />
-			<div className="mb-5">
+			<section className="mb-5">
 				{isMobile && <Phone imgSrc="/devices/phone.png" />}
 				{isTablet && <Tablet imgSrc="/devices/tablet.png" />}
 				{isDesktop && <Laptop imgSrc="/devices/laptop.png" />}
-			</div>
+			</section>
 		</main>
 	);
 };

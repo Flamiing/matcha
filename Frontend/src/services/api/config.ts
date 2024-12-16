@@ -1,4 +1,4 @@
-const API_VERSION = "2"/* import.meta.env.API_VERSION || "1" */;
+const API_VERSION = import.meta.env.API_VERSION || "1";
 const API_BASE_URL = `http://localhost:3001/api/v${API_VERSION}`;
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {

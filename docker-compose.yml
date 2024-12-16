@@ -30,7 +30,7 @@ services:
         container_name: backend
         build:
             context: ./Backend
-            dockerfile: ../docker/backend/Dockerfile
+            dockerfile: ../Docker/Backend/Dockerfile
         volumes:
             - ./Backend:/matcha_backend
         env_file: .env

@@ -25,8 +25,9 @@ const index = () => {
 
 	return (
 		<main className="flex flex-1 justify-center items-center flex-col">
-			<p>users</p>
-			<UserCard user={user} />
+			<section className="container max-w-6xl text-center my-20 px-3 flex flex-wrap justify-evenly gap-20">
+				<UserCard user={user} />
+			</section>
 		</main>
 	);
 };

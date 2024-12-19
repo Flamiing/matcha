@@ -7,7 +7,7 @@ const Tag = ({ value, removable = true }: TagProps) => {
 	return (
 		<span
 			id="badge-dismiss-dark"
-			className="inline-flex items-center px-2 py-1 me-2 text-sm font-medium text-black bg-secondary-light rounded-full border border-gray-500"
+			className="inline-flex items-center px-2 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm border"
 		>
 			{value}
 

@@ -1,6 +1,6 @@
 FROM node:22.11.0-bookworm
 
-WORKDIR /matcha_backend
+WORKDIR /backend
 
 COPY . .
 RUN npm install

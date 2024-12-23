@@ -29,10 +29,10 @@ services:
     backend:
         container_name: backend
         build:
-            context: ./Backend
-            dockerfile: ../docker/backend/Dockerfile
+            context: ./backend
+            dockerfile: ../docker/Backend/Dockerfile
         volumes:
-            - ./Backend:/matcha_backend
+            - ./backend:/backend
         env_file: .env
         restart: on-failure
         networks:

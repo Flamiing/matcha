@@ -49,6 +49,8 @@ remove_data:
 
 destroy: down remove_data
 	@echo "$(GREEN)<+> REMOVING ALL IMAGES <+> $(COLOR_OFF)"
+	@rm -rf $(BACKEND_NODE_MODULES)
+	@rm -rf $(FRONTEND_NODE_MODULES)
 	@docker system prune -af
 
 re: destroy build

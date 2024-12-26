@@ -29,19 +29,19 @@ services:
     backend:
         container_name: backend
         build:
-            context: ./backend
-            dockerfile: ../docker/Backend/Dockerfile
+            context: ./Docker/Backend
+            dockerfile: Dockerfile
         volumes:
-            - ./backend:/backend
-        env_file: .env
-        restart: on-failure
+            - ./Backend:/backend
         networks:
             - matcha-network
-        ports:
-            - "3001:3001"
         depends_on:
             postgresql:
               condition: service_healthy
+        env_file: .env
+        ports:
+            - "3001:3001"
+        restart: on-failure
 
     frontend:
         container_name: frontend
@@ -50,7 +50,6 @@ services:
             dockerfile: ../Docker/Frontend/Dockerfile
         volumes:
             - ./frontend:/frontend
-            - /frontend/node_modules
         env_file: .env
         restart: on-failure
         networks:

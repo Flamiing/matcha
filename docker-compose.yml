@@ -46,19 +46,19 @@ services:
     frontend:
         container_name: frontend
         build:
-            context: ./frontend
-            dockerfile: ../Docker/Frontend/Dockerfile
+            context: ./Docker/Frontend
+            dockerfile: Dockerfile
         volumes:
             - ./frontend:/frontend
-        env_file: .env
-        restart: on-failure
         networks:
             - matcha-network
+        env_file: .env
         ports:
             - "3000:3000"
         expose:
             - "3000"
-        command: ["npm", "run", "dev"]
+        restart: on-failure
+
 volumes:
     postgresql_volume:
         driver: local

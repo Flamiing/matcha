@@ -1,11 +1,8 @@
 FROM node:22.11.0-bookworm
 
-WORKDIR /Frontend
+COPY ./tools/ .
+RUN chmod +x /setup.sh
 
-COPY package*.json ./
-RUN npm install
+WORKDIR /frontend
 
-COPY . .
-
-# Start the app
-CMD ["npm", "run", "dev"]
+ENTRYPOINT [ "bash", "/setup.sh" ]

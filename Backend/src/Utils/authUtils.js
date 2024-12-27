@@ -7,13 +7,17 @@ import { createConfirmationToken } from './jsonWebTokenUtils.js';
 import userModel from '../Models/UserModel.js';
 
 export async function checkAuthStatus(req) {
-    const { user } = req.session;
-    if (user) {
-        const userExist = await userModel.findOne({ id: user.id });
-        if (userExist && userExist.length !== 0)
-            return { isAuthorized: true, user: user };
+    try {
+        const { user } = req.session;
+        if (user) {
+            const userExist = await userModel.findOne({ id: user.id });
+            if (userExist && userExist.length !== 0)
+                return { isAuthorized: true, user: user };
+        }
+        return { isAuthorized: false };
+    } catch {
+        return { isAuthorized: false };
     }
-    return { isAuthorized: false };
 }
 
 export async function sendConfirmationEmail({

@@ -1,8 +1,8 @@
 FROM node:22.11.0-bookworm
 
-WORKDIR /matcha_backend
+COPY ./tools/ .
+RUN chmod +x /setup.sh
 
-COPY . .
-RUN npm install
+WORKDIR /backend
 
-CMD [ "npm", "run", "dev" ]
+ENTRYPOINT [ "bash", "/setup.sh" ]

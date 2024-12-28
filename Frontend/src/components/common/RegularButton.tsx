@@ -1,10 +1,12 @@
-import React from "react";
+interface RegularButtonProps {
+	value: string;
+	callback?: () => void;
+}
 
-const RegularButton: React.FC = ({ value, callback }) => {
+const RegularButton = ({ value, callback }: RegularButtonProps) => {
 	return (
 		<>
 			<button
-				type="button"
 				title={value}
 				className="w-fit duration-200 font-bold rounded-full bg-primary text-white border-primary border-solid border hover:bg-white hover:text-primary px-5 py-3"
 				onClick={callback}

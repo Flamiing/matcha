@@ -4,6 +4,7 @@ import Face from "./Face";
 import Body from "./Body";
 import Info from "./Info";
 import Images from "./Images";
+import LikesAndViews from "./LikesAndViews";
 import TagSection from "./TagSection";
 
 interface UserData {
@@ -52,7 +53,10 @@ const index = () => {
 			<div className="w-full bg-gradient-to-br from-orange-200 to-purple-200 flex flex-col items-center gap-12">
 				<Face editable={true} user={userData} />
 				<Body user={userData} />
-				<Images user={userData} />
+				<section className="flex flex-row w-fit items-center justify-center mb-10 gap-7">
+					<Images user={userData} />
+					<LikesAndViews user={userData} />
+				</section>
 			</div>
 			<Info user={userData} />
 			<TagSection tags={userData.tags} />

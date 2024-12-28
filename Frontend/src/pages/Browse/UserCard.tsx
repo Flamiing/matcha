@@ -39,24 +39,27 @@ const UserCard = ({ user }: UserCardProps) => {
 					<div className="absolute inset-0 bg-gradient-to-t xl:opacity-0 from-black/80 via-black/30 to-transparent transition-opacity duration-300 xl:group-hover:opacity-100" />
 				</div>
 
-
 				<div
-					className="absolute top-3 right-3 bg-white text-white rounded-full shadow-lg h-7 w-7"
+					className="absolute top-3 right-3 bg-white text-white rounded-full shadow-lg"
 					onClick={handleLikeClick}
 				>
-					<div className="w-full h-full flex justify-center items-center">
-						<span className={`fa text-primary ${liked ? "fa-heart" : "fa-heart-o"}`} />
+					<div className="h-11 w-11 flex justify-center items-center">
+						<span
+							className={`fa text-primary text-3xl ${
+								liked ? "fa-heart" : "fa-heart-o"
+							}`}
+						/>
 					</div>
 				</div>
 
-				<div className="absolute xl:translate-y-20 bottom-0 left-0 right-0 p-4 text-white transition-transform duration-300 transform xl:group-hover:translate-y-0 group-hover:translate-y-20">
+				<div className="absolute xl:translate-y-24 bottom-0 left-0 right-0 p-4 text-white transition-transform duration-300 transform xl:group-hover:translate-y-0 group-hover:translate-y-20">
 					<div className="flex items-center justify-between mb-2">
 						<h2 className="text-xl font-semibold">
 							{user.first_name}, {user.age}
 						</h2>
 
 						<div className="flex items-center gap-2 text-sm">
-							{Date.now() - user.last_online ? (
+							{Date.now() - user.last_online < 5 * 60 * 1000 ? ( // 5 minutes
 								<div className="flex items-center gap-1">
 									<div className="w-2 h-2 bg-green-500 rounded-full ring-2 ring-green-400" />
 									<span>Online</span>

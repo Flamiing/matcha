@@ -48,7 +48,7 @@ services:
         restart: on-failure
 
     frontend:
-        container_name: frontend
+        container_name: Frontend
         build:
             context: ./Docker/Frontend
             dockerfile: Dockerfile
@@ -70,7 +70,6 @@ volumes:
             type: "none"
             o: "bind"
             device: "${POSTGRESQL_VOLUME_PATH}"
-
 networks:
     matcha-network:
         driver: bridge

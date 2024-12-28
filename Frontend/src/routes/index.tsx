@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/LogIn";
 import Register from "../pages/Register";
 import Profile from "../pages/Profile";
+import ProfileEdit from "../pages/ProfileEdit";
 import NotFound from "../pages/NotFound";
 import Oauth from "../pages/Callbacks/Oauth";
 import ConfirmEmail from "../pages/Callbacks/ConfirmEmail";
@@ -13,16 +14,18 @@ import Browse from "../pages/Browse";
 const protectedRoutes = {
 	profile: {
 		path: "profile",
+		element: <Profile />,
+	},
+	profileEdit: {
+		path: "profile/edit",
 		element: (
-			<Profile />
+				<ProfileEdit />
 		),
 	},
 	browse: {
 		path: "browse",
-		element: (
-			<Browse />
-		)
-	}
+		element: <Browse />,
+	},
 };
 
 const publicRoutes = {
@@ -49,7 +52,7 @@ const callbackRoutes = {
 		path: "auth/email/callback",
 		element: <ConfirmEmail />,
 	},
-}
+};
 
 // 404 default route if not found
 const defaultRoute = {

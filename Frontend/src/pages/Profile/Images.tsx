@@ -13,7 +13,7 @@ const ImageGallery = ({ user }: ImageGalleryProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	return (
-		<section className="container max-w-4xl mx-auto mb-10 px-3 flex justify-center">
+		<div>
 			{/* Modal */}
 			{isModalOpen && (
 				<div
@@ -75,14 +75,14 @@ const ImageGallery = ({ user }: ImageGalleryProps) => {
 			{/* Trigger Button */}
 			<button
 				onClick={() => setIsModalOpen(true)}
-				className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 p-0.5 font-medium text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-cyan-200"
+				className=" group inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 p-0.5 font-medium text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-cyan-200"
 			>
 				<span className="flex items-center gap-2 rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0">
 					<span className="fa fa-image" />
 					{user.first_name}'s Images
 				</span>
 			</button>
-		</section>
+		</div>
 	);
 };
 

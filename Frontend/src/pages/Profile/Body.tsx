@@ -2,16 +2,16 @@ import { timeAgo } from "../../hooks/timeAgo";
 import FameRating from "../../components/common/FameRating";
 
 interface UserData {
-	first_name: string;
-	second_name: string;
+	firstName: string;
+	secondName: string;
 	username: string;
 	email: string;
 	age: number;
 	biography: string;
 	fame: number;
-	last_online: number;
+	lastOnline: number;
 	gender: string;
-	sexual_preference: string;
+	sexualPreference: string;
 }
 
 interface FaceProps {
@@ -24,16 +24,17 @@ const Face: React.FC<FaceProps> = ({ user }) => {
 			<div className="flex flex-row justify-center gap-3 w-fit py-5">
 				<FameRating fame={user.fame} />
 				<div className="w-36 flex items-center justify-center">
-					{timeAgo(user.last_online) === "Currently online" ? (
+					{timeAgo(user.lastOnline + 5 * 60 * 1000) === // 5 minutes
+					"Currently online" ? (
 						<div className="ml-3 flex items-center justify-center gap-2">
-							<div className="w-2 h-2 bg-green-500 ring-2 ring-white rounded-full"></div>
+							<div className="w-2 h-2 bg-green-500 rounded-full ring-2 ring-green-400" />
 							<p className="font-light">
-								{timeAgo(user.last_online)}
+								{"Last seen " + timeAgo(user.lastOnline)}
 							</p>
 						</div>
 					) : (
 						<p className="font-light">
-							{timeAgo(user.last_online)}
+							{"Last seen " + timeAgo(user.lastOnline)}
 						</p>
 					)}
 				</div>

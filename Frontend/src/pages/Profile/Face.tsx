@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
 
 interface UserData {
-	first_name: string;
-	second_name: string;
+	firstName: string;
+	secondName: string;
 	username: string;
 	email: string;
 	age: number;
 	biography: string;
 	fame: number;
-	last_online: number;
-	profile_picture: string;
+	lastOnline: number;
+	profilePicture: string;
 	gender: string;
-	sexual_preference: string;
+	sexualPreference: string;
 }
 
 interface FaceProps {
@@ -36,7 +36,7 @@ const Face = ({ user, editable = false }: FaceProps) => {
 			<div className="flex flex-col items-center gap-7">
 				<div className="relative">
 					<img
-						src={user.profile_picture}
+						src={user.profilePicture}
 						alt="UserProfile"
 						className="w-36 rounded-full border shadow-lg h-36 object-cover"
 					/>
@@ -52,10 +52,10 @@ const Face = ({ user, editable = false }: FaceProps) => {
 
 					<div className="flex gap-1 flex-wrap justify-center">
 						<p className="text-sm font-light text-gray-500">
-							{user.first_name}
+							{user.firstName}
 						</p>
 						<p className="text-sm font-light text-gray-500">
-							{user.second_name}
+							{user.secondName}
 						</p>
 					</div>
 				</div>

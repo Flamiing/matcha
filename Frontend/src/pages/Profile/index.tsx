@@ -10,15 +10,15 @@ import TagSection from "./TagSection";
 interface UserData {
 	username: string;
 	email: string;
-	first_name: string;
-	second_name: string;
+	firstName: string;
+	secondName: string;
 	age: number;
 	biography: string;
 	fame: number;
-	last_online: number;
-	profile_picture: string;
+	lastOnline: number;
+	profilePicture: string;
 	gender: string;
-	sexual_preference: string;
+	sexualPreference: string;
 	tags: string[];
 	images: string[];
 }
@@ -29,17 +29,17 @@ const index = () => {
 	const [userData, setUserData] = useState<UserData>({
 		username: "alaparic",
 		email: "testing@matcha.com",
-		first_name: "Dennis",
-		second_name: "Bateman",
+		firstName: "Dennis",
+		secondName: "Bateman",
 		age: 27,
 		biography:
 			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime iusto accusamus quae. Tenetur sed temporibus odio consectetur natus perferendis atque facilis tempore velit quidem magnam delectus, quam ex qui architecto?",
 		fame: 125,
-		last_online: Date.now(),
-		/* last_online: Date.now() - 5 * 60 * 1000, */
+		lastOnline: Date.now(),
+		/* lastOnline: Date.now() - 5 * 60 * 1000, */
 		gender: "Male",
-		sexual_preference: "Female",
-		profile_picture: "/person.png",
+		sexualPreference: "Female",
+		profilePicture: "/person.png",
 		tags: ["gaming", "programer", "photography"],
 		images: [
 			"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.matadornetwork.com%2Fblogs%2F1%2F2024%2F02%2Fcherry-blossoms-bike-ride-1.jpg&f=1&nofb=1&ipt=154498e6af1a251026eb3331fbe588f58febbbf00d3e4d1e82356aa4df179b2a&ipo=images",
@@ -53,7 +53,7 @@ const index = () => {
 			<div className="w-full bg-gradient-to-br from-orange-200 to-purple-200 flex flex-col items-center gap-12">
 				<Face editable={true} user={userData} />
 				<Body user={userData} />
-				<section className="flex flex-row w-fit items-center justify-center mb-10 gap-7">
+				<section className="flex flex-wrap flex-row w-fit items-center justify-center mb-10 gap-7 px-4">
 					<Images user={userData} />
 					<LikesAndViews user={userData} />
 				</section>

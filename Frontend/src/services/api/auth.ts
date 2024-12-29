@@ -2,7 +2,7 @@ import apiRequest from "./config";
 
 interface RegisterData {
 	username: string;
-	first_name: string;
+	firstName: string;
 	last_name: string;
 	email: string;
 	password: string;
@@ -17,17 +17,17 @@ interface User {
 	id: string;
 	email: string;
 	username: string;
-	first_name: string;
+	firstName: string;
 	last_name: string;
 	age: number | null;
 	biography: string | null;
-	profile_picture: string | null;
+	profilePicture: string | null;
 	location: string | null;
 	fame: number;
-	last_online: number;
+	lastOnline: number;
 	is_online: boolean;
 	gender: string | null;
-	sexual_preference: string | null;
+	sexualPreference: string | null;
 }
 
 interface AuthResponse {

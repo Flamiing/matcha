@@ -15,10 +15,9 @@ export const timeAgo = (timestamp: number) => {
 		const interval = Math.floor(seconds / secondsInUnit);
 
 		if (interval >= 1) {
-			return (
-				"Last seen " +
-				(interval === 1 ? `1 ${unit} ago` : `${interval} ${unit}s ago`)
-			);
+			return interval === 1
+				? `1 ${unit} ago`
+				: `${interval} ${unit}s ago`;
 		}
 	}
 

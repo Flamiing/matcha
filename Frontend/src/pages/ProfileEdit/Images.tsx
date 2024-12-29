@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface User {
-	first_name: string;
+	firstName: string;
 	images: string[]; // array of image URLs
 }
 
@@ -40,7 +40,7 @@ const ImageGallery = ({ user, images, onImagesUpdate }: ImageGalleryProps) => {
 							<div className="flex items-center justify-between p-4 border-b">
 								<h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
 									<span className="fa fa-image" />
-									{user.first_name}'s Images
+									{user.firstName}'s Images
 								</h3>
 								<button
 									onClick={() => setIsModalOpen(false)}
@@ -62,7 +62,7 @@ const ImageGallery = ({ user, images, onImagesUpdate }: ImageGalleryProps) => {
 												<img
 													src={imageUrl}
 													alt={`${
-														user.first_name
+														user.firstName
 													}'s image ${index + 1}`}
 													className="absolute inset-0 w-full h-full object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer"
 												/>

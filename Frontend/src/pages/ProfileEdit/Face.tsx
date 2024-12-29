@@ -3,17 +3,17 @@ import FormInput from "../../components/common/FormInput";
 import Images from "./Images";
 
 interface UserData {
-	first_name: string;
-	second_name: string;
+	firstName: string;
+	secondName: string;
 	username: string;
 	email: string;
 	age: number;
 	biography: string;
 	fame: number;
-	last_online: number;
+	lastOnline: number;
 	profilePicture: string;
 	gender: string;
-	sexual_preference: string;
+	sexualPreference: string;
 }
 
 interface FaceProps {

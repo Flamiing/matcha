@@ -27,13 +27,13 @@ const index = () => {
 	const [formData, setFormData] = useState<UserData>({
 		username: "alaparic",
 		email: "test@test.com",
-		first_name: "Dennis",
-		second_name: "Bateman",
+		firstName: "Dennis",
+		secondName: "Bateman",
 		age: 27,
 		biography:
 			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime iusto accusamus quae. Tenetur sed temporibus odio consectetur natus perferendis atque facilis tempore velit quidem magnam delectus, quam ex qui architecto?",
 		gender: "",
-		sexual_preference: "",
+		sexualPreference: "",
 		location: "",
 		images: [],
 		profilePicture: "/person.png",

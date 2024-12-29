@@ -3,16 +3,16 @@ import FormInput from "../../components/common/FormInput";
 import FormSelect from "../../components/common/FormSelect";
 
 interface UserData {
-	first_name: string;
-	second_name: string;
+	firstName: string;
+	secondName: string;
 	username: string;
 	email: string;
 	age: number;
 	biography: string;
 	fame: number;
-	last_online: number;
+	lastOnline: number;
 	gender: string;
-	sexual_preference: string;
+	sexualPreference: string;
 }
 
 interface FaceProps {

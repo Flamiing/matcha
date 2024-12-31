@@ -16,7 +16,11 @@ services:
             POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
             POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE}
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}",
+                ]
             interval: 10s
             timeout: 5s
             retries: 5
@@ -37,19 +41,19 @@ services:
             - matcha-network
         depends_on:
             postgresql:
-              condition: service_healthy
+                condition: service_healthy
         env_file: .env
         ports:
             - "3001:3001"
         restart: on-failure
 
     frontend:
-        container_name: frontend
+        container_name: Frontend
         build:
             context: ./Docker/Frontend
             dockerfile: Dockerfile
         volumes:
-            - ./frontend:/frontend
+            - ./Frontend:/Frontend
         networks:
             - matcha-network
         env_file: .env

@@ -9,7 +9,6 @@ import TagSection from "./TagSection";
 
 interface UserData {
 	username: string;
-	email: string;
 	firstName: string;
 	secondName: string;
 	age: number;
@@ -32,6 +31,7 @@ const index = () => {
 		firstName: "Dennis",
 		secondName: "Bateman",
 		age: 27,
+		location: "Vancouver, BC",
 		biography:
 			"Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime iusto accusamus quae. Tenetur sed temporibus odio consectetur natus perferendis atque facilis tempore velit quidem magnam delectus, quam ex qui architecto?",
 		fame: 125,

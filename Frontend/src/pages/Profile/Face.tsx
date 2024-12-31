@@ -33,7 +33,7 @@ const Face = ({ user, editable = false }: FaceProps) => {
 				</Link>
 			)}
 
-			<div className="flex flex-col items-center gap-7">
+			<div className="flex flex-col items-center gap-3">
 				<div className="relative">
 					<img
 						src={user.profilePicture}
@@ -42,20 +42,22 @@ const Face = ({ user, editable = false }: FaceProps) => {
 					/>
 				</div>
 
-				<div className="flex flex-col gap-2">
-					<p className="text-3xl font-semibold">
+				<div className="flex flex-col gap-1">
+					<p className="text-2xl font-semibold">
 						{user.username}{" "}
-						<span className="text-gray-500 text-2xl">
-							{user.age}
-						</span>
+						<span className="text-gray-500">{user.age}</span>
 					</p>
 
-					<div className="flex gap-1 flex-wrap justify-center">
-						<p className="text-sm font-light text-gray-500">
-							{user.firstName}
-						</p>
-						<p className="text-sm font-light text-gray-500">
-							{user.secondName}
+					<div className="flex gap-1 flex-wrap justify-center font-light text-gray-500">
+						<p>{user.firstName + " " + user.secondName}</p>
+					</div>
+
+					<div>
+						<p className="text-gray-700 leading-relaxed text-pretty text-start flex flex-row items-center gap-1">
+							<span className="fa fa-map-marker font-semibold text-red-500" />
+							<span className="truncate max-w-[200px]">
+								{user.location}
+							</span>
 						</p>
 					</div>
 				</div>
